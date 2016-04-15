@@ -64,6 +64,9 @@ angular.module('mpk').controller('ApplicationController',
 	$scope.kanbanMenu.openArchive = function (kanban){
 		$scope.$broadcast('OpenArchive', kanban);
 	};
+	$scope.kanbanMenu.openUsers = function (kanban){
+    		$scope.$broadcast('openUsers', kanban);
+    };
 	$scope.kanbanMenu.openExport = function(allKanbans, kanbanName){
 		$scope.$broadcast('OpenExport', allKanbans, kanbanName);
 	};

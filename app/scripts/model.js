@@ -5,6 +5,7 @@ function Kanban(name, numberOfColumns) {
 		numberOfColumns: numberOfColumns,
 		columns: [],
 		archived: [],
+		users: [],
 		settings: {}
 	};
 }

@@ -57,6 +57,8 @@
                     <li><a title="Select Theme for the Kanban board" ng-click="kanbanMenu.openSwitchTheme()"><i class="glyphicon glyphicon-picture"></i> Themes</a></li>
                     <li><a title="Open archive" ng-click="kanbanMenu.openArchive(kanban)"><i class="glyphicon glyphicon-folder-open"></i> Archives</a></li>
                     <li role="presentation" class="divider"></li>
+                    <li><a title="Open archive" ng-click="kanbanMenu.openUsers(kanban)"><i class="glyphicon glyphicon-user"></i> Users</a></li>
+                    <li role="presentation" class="divider"></li>
                     <li><a title="Export Kanban to file" ng-click="kanbanMenu.openExport(allKanbans, kanban.name)" href=""><i class="glyphicon glyphicon-save"></i> Export</a></li>
                     <li><a title="Import Kanban from file" ng-click="kanbanMenu.openImport()" href=""><i class="glyphicon glyphicon-open"></i> Import</a></li>
                     <li role="presentation" class="divider"></li>
@@ -204,8 +206,8 @@
                     <a title="OK" class="btn btn-default" ng-click="editingTitle = false" ng-hide="!editingTitle"><i class="glyphicon glyphicon-ok"></i></a>
                     <a title="Edit card title" class="btn btn-default" ng-click="editingTitle = true" ng-hide="editingTitle"><i class="glyphicon glyphicon-pencil"></i></a>
                   </span>
-                </ng-form>
                 </div>
+                </ng-form>
               </div>
           </div>
           <div class="form-group">
@@ -238,8 +240,8 @@
                     <a title="OK" class="btn btn-default" ng-click="editingOwner = false" ng-hide="!editingOwner"><i class="glyphicon glyphicon-ok"></i></a>
                     <a title="Edit card owner" class="btn btn-default" ng-click="editingOwner = true" ng-hide="editingOwner"><i class="glyphicon glyphicon-pencil"></i></a>
                   </span>
-                </ng-form>
                 </div>
+                </ng-form>
               </div>				
 		  </div>	            
         </form>
@@ -419,9 +421,30 @@
         <button class="btn btn-primary" type="submit" ng-click="import()" ng-disabled="model.file==''">Import</button>
       </div>
     </form>
-  </mpk-mdodal>
+  </mpk-modal>
 </div>
 
+
+<div ng-controller="KanbanController">
+    <mpk-modal visible="showUsers" title="Manage Kanban users">
+        <ul ng-class="sortableClassFor(column)">
+            <li class="card" ng-repeat="user in kanban.users">
+                <a>{{user.name}}</a>
+                <a class="pull-right" ng-click="deleteUser(user)"><i class="glyphicon glyphicon-remove"></i></a>
+            </li>
+        </ul>
+        <form name="manageUser" class="noMargin" ng-submit="updateUsers()">
+            <div class="form-group">
+                <label class="control-label" for="newUser">New User:</label>
+            </div>
+            <input type="text" id="newUser" name="newUser" ng-model="newUser.name" required class="form-control"/>
+            <div class="modal-footer">
+                <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+        </form>
+    </mpk-modal>
+</div>
 
 <!-- Cloud stuff from here -->
 <div ng-controller="SetupCloudController">

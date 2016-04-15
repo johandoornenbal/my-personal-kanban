@@ -4,7 +4,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
   return {
     kanbansByName : {},
     lastUsed : '',
-    theme: 'default-bright',
+    theme: 'default-dark',
     lastUpdated: 0,
     
     add: function(kanban){
