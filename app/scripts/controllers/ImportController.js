@@ -28,6 +28,7 @@ angular.module('mpk').controller('ImportController', function ImportController($
 				}
 				$scope.$emit('DownloadFinished');
 				$scope.showImportModal = false;
+				$scope.$emit('ImportFinished');
 			} catch(exception) {
 				$scope.model.readError = true;
 			}

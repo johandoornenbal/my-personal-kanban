@@ -19,6 +19,10 @@ angular.module('mpk').controller('ApplicationController',
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 	});
 
+	$scope.$on('ImportFinished', function(){
+        $scope.kanban = kanban;
+    });
+
 	function calculateColumnWidth(numberOfColumns){
 		return Math.floor((100 / numberOfColumns) * 100) / 100;
 	}
