@@ -110,7 +110,8 @@
                     <a class="pull-right" title="Archive" ng-click="archive(kanban, column, card)" ng-show="isLastColumn(column.name, kanban)"><i class="glyphicon glyphicon-folder-close"></i></a>
                     <a ng-click="openCardDetails(card)"><span>{{card.name}}</span></a>
                     <br />
-					<a class="pull-right" ng-click="openCardDetails(card)"><span>{{card.owner}}</span></a>
+                    <br />
+                    <span class="pull-right" ng-show="card.owner"><i class="h5" style="border: solid 4px {{card.owner.color}}; padding: 2px; margin-top: 10px; margin-right: 5px;">{{card.owner.initials}}</i></span>
 					<br />
                 </li>
             </ul>
@@ -144,7 +145,7 @@
             <label class="control-label" for="columnLimit">Card limit for this column</label>
             <div class="controls row">
               <div class="col-md-2">
-                <input name="columnLimit" type="number" ng-model="model.limit" class="form-control" />
+                <input name="columnLimit" id="columnLimit" type="number" ng-model="model.limit" class="form-control" />
               </div>
             </div>
           </div> 
@@ -235,11 +236,9 @@
               <div class="controls">
                 <ng-form ng-submit="editingOwner = false">
                 <div class="input-group">
-                  <input name="cardOwner" type="text" id="cardOwner" placeholder="Owner of a card" ng-model="card.owner" class="form-control" ng-disabled="!editingOwner" focus-me />
-                  <span class="input-group-btn">
-                    <a title="OK" class="btn btn-default" ng-click="editingOwner = false" ng-hide="!editingOwner"><i class="glyphicon glyphicon-ok"></i></a>
-                    <a title="Edit card owner" class="btn btn-default" ng-click="editingOwner = true" ng-hide="editingOwner"><i class="glyphicon glyphicon-pencil"></i></a>
-                  </span>
+                    <select ng-model="card.owner" id="cardOwner" ng-options="user.name for user in kanban.users">
+                        <option value="">No owner</option>
+                    </select>
                 </div>
                 </ng-form>
               </div>				
@@ -249,7 +248,33 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </mpk-modal>
-  </div>        
+  </div>
+
+    <div ng-controller="CardController">
+        <mpk-modal title="Set new owner" visible="changeOwner">
+            <form class="noMargin" name="changeUser">
+                <div class="form-group">
+                    <label class="control-label" for="cardOwner1">Card owner</label>
+                    <div class="controls">
+                        <ng-form ng-submit="editingOwner = false">
+                            <div class="input-group">
+                                <select ng-model="card.owner" id="cardOwner1" ng-options="user.name for user in kanban.users">
+                                </select>
+                            </div>
+                        </ng-form>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-danger" ng-click="card.owner = ''">remove {{card.owner.name}} as owner</button>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </mpk-modal>
+    </div>
+
+
 </div>
 
 <div ng-controller="NewKanbanController">
@@ -427,17 +452,23 @@
 
 <div ng-controller="KanbanController">
     <mpk-modal visible="showUsers" title="Manage Kanban users">
-        <ul ng-class="sortableClassFor(column)">
+        <ul ng-class="">
             <li class="card" ng-repeat="user in kanban.users">
+                <span class="pull-left"><i class="h5" style="border: solid 4px {{user.color}}; padding: 2px; margin-right: 5px;">{{user.initials}}</i></span>
                 <a>{{user.name}}</a>
                 <a class="pull-right" ng-click="deleteUser(user)"><i class="glyphicon glyphicon-remove"></i></a>
             </li>
         </ul>
         <form name="manageUser" class="noMargin" ng-submit="updateUsers()">
             <div class="form-group">
-                <label class="control-label" for="newUser">New User:</label>
+                <label class="control-label" for="newUser">Add new user:</label>
             </div>
-            <input type="text" id="newUser" name="newUser" ng-model="newUser.name" required class="form-control"/>
+            <input type="text" id="newUser" name="newUser" ng-model="newUser.name" required class="form-control" placeholder="name"/>
+            <input type="text" id="newUserInitials" name="newUserInitials" ng-model="newUser.initials" required class="form-control" placeholder="initials"/>
+            <!--<input type="text" id="newUserIcon" name="newUserIcon" ng-model="newUser.icon" class="form-control" placeholder="icon"/>-->
+            <input type="text" id="newUserColor" name="newUserColor" ng-model="newUser.color" class="form-control" placeholder="color"/>
+            <spectrum-colorpicker ng-model="newUser.color" options="{allowEmpty: true}" format="'hex'">
+            </spectrum-colorpicker>
             <div class="modal-footer">
                 <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
                 <button class="btn btn-primary" type="submit">Save</button>

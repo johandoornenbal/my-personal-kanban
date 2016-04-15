@@ -17,5 +17,14 @@ var CardController = function ($scope) {
 		$scope.showCardDetails = true;
 	});
 
+	$scope.$on('ChangeOwner', function(e, card){
+    		$scope.card = card;
+
+    		$scope.editingDetails = false;
+    		$scope.editingTitle = false;
+
+    		$scope.changeOwner = true;
+    	});
+
 };
 mpkModule.controller('CardController', CardController);

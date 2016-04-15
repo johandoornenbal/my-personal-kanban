@@ -41,3 +41,4 @@ function KanbanUser(name, initials, icon, color){
 	this.color = color;
 	return this;
 }
+

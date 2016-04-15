@@ -13,7 +13,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	};
     
     $scope.setOwner = function(card){
-		kanbanManipulator.setOwner($scope.kanban, card);
+		$scope.$broadcast('ChangeOwner', card);
 	};
 
 	$scope.updateUsers = function(){
@@ -22,13 +22,13 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	};
 
 	$scope.deleteUser = function(user){
-    	    if (confirm('You sure?')){
-            	angular.forEach($scope.kanban.users, function(u){
-                   if (u.name === user.name){
-                       $scope.kanban.users.splice($scope.kanban.users.indexOf(u), 1);
-                   }
-                });
-            }
+    	if (confirm('You sure?')){
+         	angular.forEach($scope.kanban.users, function(u){
+               if (u.name === user.name){
+                   $scope.kanban.users.splice($scope.kanban.users.indexOf(u), 1);
+               }
+            });
+        }
     };
 
 	$scope.openCardDetails = function(card){
@@ -100,5 +100,6 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	    $scope.showUsers = true;
 	    $scope.newUser = {};
 	});
+
 });
 
