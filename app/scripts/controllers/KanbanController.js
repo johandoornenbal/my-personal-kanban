@@ -11,6 +11,10 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 			kanbanManipulator.removeCardFromColumn($scope.kanban, column, card);
 		}
 	};
+    
+    $scope.setOwner = function(card){
+			kanbanManipulator.setOwner($scope.kanban, card);
+	};
 
 	$scope.openCardDetails = function(card){
 		$scope.$broadcast('OpenCardDetails', card);

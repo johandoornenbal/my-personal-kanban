@@ -29,6 +29,10 @@ angular.module('mpk').factory('kanbanManipulator', function () {
         }
       });
     },
+      
+    setOwner: function(kanban, card){
+    	alert("set owner on this card with name \"" + card.name + "\"");
+    },  
 
     archiveCard: function(kanban, column, card){
       if (kanban.archived == undefined){
