@@ -8,6 +8,7 @@ stories_*
 */.*
 node_modules/
 app/bower_modules/
+app/bower_components/
 .tmp/
 dist/
 bower_components/
