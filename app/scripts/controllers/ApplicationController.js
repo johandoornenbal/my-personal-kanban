@@ -189,38 +189,50 @@ angular.module('mpk').controller('ApplicationController',
 	$scope.spinConfig = {lines: 10, length: 3, width: 2, radius:5};
 
 	var currentKanban = new Kanban('Kanban name', 0);
-	var loadedRepo = kanbanRepository.load();
 
-	if (loadedRepo){
-		if ($routeParams.kanbanName != undefined && kanbanRepository.get($routeParams.kanbanName)) {
-			currentKanban = kanbanRepository.get($routeParams.kanbanName);
-		} else if (kanbanRepository.getLastUsed() != undefined	) {
-			currentKanban = kanbanRepository.getLastUsed();
-			$location.path('/kanban/' + currentKanban.name);
-		}
-	}
+	//  using local repo
+    //	var loadedRepo = kanbanRepository.load();
 
-	$scope.kanban = currentKanban;
-	$scope.allKanbans = Object.keys(kanbanRepository.all());
-	$scope.selectedToOpen = $scope.newName = currentKanban.name;
+    // using db repo
+    var loadedRepo = kanbanRepository.restApiLoad().then(function(data){
 
-	$scope.switchToList = $scope.allKanbans.slice(0);
-	$scope.switchToList.splice(0, 0, 'Switch to ...');
-	$scope.switchTo = 'Switch to ...';
+        kanbanRepository.kanbansByName = data.kanbans;
+        kanbanRepository.lastUsed = data.lastUsed;
+        kanbanRepository.theme = data.theme;
+        kanbanRepository.lastUpdated = data.lastUpdated;
 
-	$scope.$watch('kanban', function(){
-		kanbanRepository.save();
-	}, true);
+        if (loadedRepo){
+            if ($routeParams.kanbanName != undefined && kanbanRepository.get($routeParams.kanbanName)) {
+                currentKanban = kanbanRepository.get($routeParams.kanbanName);
+            } else if (kanbanRepository.getLastUsed() != undefined	) {
+                currentKanban = kanbanRepository.getLastUsed();
+                $location.path('/kanban/' + currentKanban.name);
+            }
+        }
 
-	$scope.columnHeight = angular.element($window).height() - 110;
-	$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
+        $scope.kanban = currentKanban;
+        $scope.allKanbans = Object.keys(kanbanRepository.all());
+        $scope.selectedToOpen = $scope.newName = currentKanban.name;
 
-	$scope.triggerOpen = function(){
-		$scope.$broadcast('TriggerOpenKanban');
-	};
+        $scope.switchToList = $scope.allKanbans.slice(0);
+        $scope.switchToList.splice(0, 0, 'Switch to ...');
+        $scope.switchTo = 'Switch to ...';
 
-	if (kanbanRepository.getTheme() != undefined && kanbanRepository.getTheme() != ''){
-		themesProvider.setCurrentTheme(kanbanRepository.getTheme());
-	}
+        $scope.$watch('kanban', function(){
+            kanbanRepository.save();
+        }, true);
+
+        $scope.columnHeight = angular.element($window).height() - 110;
+        $scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
+
+        $scope.triggerOpen = function(){
+            $scope.$broadcast('TriggerOpenKanban');
+        };
+
+        if (kanbanRepository.getTheme() != undefined && kanbanRepository.getTheme() != ''){
+            themesProvider.setCurrentTheme(kanbanRepository.getTheme());
+        }
+
+	});
 
 });

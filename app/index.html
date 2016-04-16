@@ -258,7 +258,7 @@
                     <div class="controls">
                         <ng-form ng-submit="editingOwner = false">
                             <div class="input-group">
-                                <select ng-model="card.owner" id="cardOwner1" ng-options="user.name for user in kanban.users">
+                                <select ng-model="card.owner" id="cardOwner1" ng-options="user.name for user in kanban.users" focus-me>
                                 </select>
                             </div>
                         </ng-form>

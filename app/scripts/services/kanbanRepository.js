@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mpk').factory('kanbanRepository', function (cloudService, cryptoService) {
+angular.module('mpk').factory('kanbanRepository', function (cloudService, cryptoService, $http, $q) {
   return {
     kanbansByName : {},
     lastUsed : '',
@@ -35,9 +35,62 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
 
     save: function(){
       var prepared = this.prepareSerializedKanbans();
+
+      console.log("saving locally");
       localStorage.setItem('myPersonalKanban', prepared);
+
+      console.log("saving to db");
+
+      var result = this.restApiSave(prepared);
+      result.then(function(data){
+        console.log(data);
+      });
+
       return this.kanbansByName;
     },
+
+    restApiSave : function(payload) {
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: 'http://localhost:8888/my-personal-kanban/backend/api.php',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    restApiLoad : function() {
+              console.log("loading from db storage");
+              var defer = $q.defer();
+              $http({
+                      method: 'GET',
+                      url: 'http://localhost:8888/my-personal-kanban/backend/api.php',
+                      cache: false,
+                      dataType: "json",
+                      headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                      }
+                  })
+                  .then(function successCallback(response){
+                        defer.resolve(response.data);
+                  },
+                  function errorCallback(response) {
+                        defer.resolve(response.data);
+                  });
+              return defer.promise;
+    },
+
 
     load: function(){
       var saved = angular.fromJson(localStorage.getItem('myPersonalKanban'));
@@ -48,6 +101,8 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
       this.lastUsed = saved.lastUsed;
       this.theme = saved.theme;
       this.lastUpdated = saved.lastUpdated;
+      console.log("loading from local storage");
+
       return this.kanbansByName;
     },
 
