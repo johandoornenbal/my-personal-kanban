@@ -397,7 +397,8 @@
           <th></th>
           <th style="width: 25%">Archived on</th>
           <th style="width: 33%">Card title</th>
-          <th style="width: 40%">Description</th>
+          <th style="width: 30%">Description</th>
+            <th style="width: 10%">Owner</th>
         </tr>
       </thead>
         <tr ng-repeat="archivedCard in model.archived | archiveByCardName:model.filterByName">
@@ -405,6 +406,7 @@
           <td>{{formatDate(archivedCard.archivedOn)}}</td>
           <td>{{archivedCard.card.name}}</td>
           <td>{{archivedCard.card.details}}</td>
+            <td>{{archivedCard.card.owner.name}} [{{archivedCard.card.owner.initials}}]</td>
         </tr>
       <tbody>
       </tbody>
