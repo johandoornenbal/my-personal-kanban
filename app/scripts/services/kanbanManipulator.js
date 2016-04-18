@@ -14,10 +14,10 @@ angular.module('mpk').factory('kanbanManipulator', function () {
       kanban.columns.push(new KanbanColumn(columnName));
     },
 
-    addCardToColumn: function(kanban, column, cardTitle, details, color){
+    addCardToColumn: function(kanban, column, cardTitle, details, color, owner){
       angular.forEach(kanban.columns, function(col){
         if (col.name === column.name){
-          col.cards.push(new KanbanCard(cardTitle, details, color));
+          col.cards.push(new KanbanCard(cardTitle, details, color, owner));
         }
       });
     },

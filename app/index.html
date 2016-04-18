@@ -3,7 +3,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title></title>
@@ -186,7 +186,18 @@
             <color-selector options="colorOptions" ng-model="newCard.cardColor" prefix="newCardColor" class="colorSelector" show-hex-code="true"/>
         </div>
 
-        <div class="modal-footer">
+        <div class="form-group">
+            <label class="control-label" for="cardOwner">Card owner</label>
+            <div class="controls">
+                <div class="input-group">
+                    <select ng-model="newCard.owner" id="cardOwner" ng-options="user.name for user in kanban.users">
+                        <option value="">No owner</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+          <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="submit" class="btn btn-primary">Add</button>
         </div>

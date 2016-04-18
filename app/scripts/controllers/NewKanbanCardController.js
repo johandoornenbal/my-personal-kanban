@@ -17,7 +17,7 @@ var NewKanbanCardController = function ($scope, kanbanManipulator) {
 		if (!this.newCardForm.$valid){
 			return false;
 		}
-		kanbanManipulator.addCardToColumn($scope.kanban, $scope.column, newCard.title, newCard.details, newCard.cardColor);
+		kanbanManipulator.addCardToColumn($scope.kanban, $scope.column, newCard.title, newCard.details, newCard.cardColor, newCard.owner);
 		$scope.newCard = angular.copy($scope.master);
 
 		
