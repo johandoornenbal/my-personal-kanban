@@ -212,10 +212,10 @@
         </div>
 
         <div ng-controller="CardController">
-            <mpk-modal title="Card details" visible="showCardDetails">
+            <mpk-modal title="{{ 'CARD_DETAILS' | translate }}" visible="showCardDetails">
                 <form class="noMargin" name="cardDetails">
                     <div class="form-group">
-                        <label class="control-label" for="cardTitle">Kanban card title</label>
+                        <label class="control-label" for="cardTitle">{{ 'CARD_TITLE' | translate }}</label>
                         <div class="controls">
                             <ng-form ng-submit="editingTitle = false">
                                 <div class="input-group">
@@ -571,6 +571,8 @@
 <script src="bower_components/angular/angular.min.js"></script>
 <script src="bower_components/angular-route/angular-route.min.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+<script src="bower_components/angular-translate/angular-translate.min.js"></script>
+<script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
 <script src="bower_components/spectrum/spectrum.js"></script>
 <script src="bower_components/angular-spectrum-colorpicker/dist/angular-spectrum-colorpicker.min.js"></script>
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
