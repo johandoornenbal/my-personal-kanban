@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('mpk').controller('ApplicationController', 
-	function ApplicationController($scope, $window, kanbanRepository, themesProvider, $routeParams, $location, cloudService) {
+	function ApplicationController($scope, $window, kanbanRepository, themesProvider, $routeParams, $location, cloudService, $translate) {
 	$scope.colorOptions = ['FFFFFF','DBDBDB','FFB5B5', 'FF9E9E', 'FCC7FC', 'FC9AFB', 'CCD0FC', '989FFA', 'CFFAFC', '9EFAFF', '94D6FF','C1F7C2', 'A2FCA3', 'FAFCD2', 'FAFFA1', 'FCE4D4', 'FCC19D'];
 
 	// <-------- Handling different events in this block ---------------> //
@@ -12,7 +12,9 @@ angular.module('mpk').controller('ApplicationController',
 		$scope.selectedToOpen = $scope.kanban.name;
 		$location.path('/kanban/' + $scope.kanban.name);
 		$scope.switchToList = $scope.allKanbans.slice(0);
-		$scope.switchToList.splice(0,0,'Switch to ...');
+		$translate("SWITCH_TO").then(function successFn(translation) {
+		    $scope.switchToList.splice(0,0,translation);
+		});
 	});
 
 	$scope.$on('ColumnsChanged', function(){
@@ -41,25 +43,29 @@ angular.module('mpk').controller('ApplicationController',
 		$scope.$broadcast('OpenNewKanban', allKanbanNames(kanbanRepository));
 	};
 	$scope.kanbanMenu.delete = function(){
-		if (confirm('You sure you want to delete the entire Kanban?')){
-			kanbanRepository.remove($scope.kanban.name);
-			var all = allKanbanNames(kanbanRepository);
+	    $translate("AYS_DELETE_KANBAN").then(function successFn(translation) {
+            if (confirm(translation)){
+                kanbanRepository.remove($scope.kanban.name);
+                var all = allKanbanNames(kanbanRepository);
 
-			if (all.length > 0){
-				kanbanRepository.setLastUsed(all[0]);
-			} else {
-				kanbanRepository.setLastUsed(undefined);
-			}
-			$scope.kanban = undefined;
-			$scope.allKanbans = Object.keys(kanbanRepository.all());
-			
-			if ($scope.allKanbans.length > 0){
-				$scope.switchToKanban($scope.allKanbans[0]);
-			}
-			
-			$scope.switchToList = $scope.allKanbans.slice(0);
-			$scope.switchToList.splice(0,0,'Switch to ...');
-		}
+                if (all.length > 0){
+                    kanbanRepository.setLastUsed(all[0]);
+                } else {
+                    kanbanRepository.setLastUsed(undefined);
+                }
+                $scope.kanban = undefined;
+                $scope.allKanbans = Object.keys(kanbanRepository.all());
+
+                if ($scope.allKanbans.length > 0){
+                    $scope.switchToKanban($scope.allKanbans[0]);
+                }
+
+                $scope.switchToList = $scope.allKanbans.slice(0);
+                $translate("SWITCH_TO").then(function successFn(translation) {
+                    $scope.switchToList.splice(0,0,translation);
+                });
+            }
+		});
 		return false;
 	};
 	$scope.kanbanMenu.openSwitchTheme = function(){
@@ -171,14 +177,18 @@ angular.module('mpk').controller('ApplicationController',
 	};
 
 	$scope.switchToKanban = function(kanbanName){
-		if (kanbanName == 'Switch to ...') return;
+	    $translate("SWITCH_TO").then(function successFn(translation) {
+		    if (kanbanName == translation) return;
+		});
 		$scope.kanban = kanbanRepository.get(kanbanName);
 
 		kanbanRepository.setLastUsed(kanbanName);
 		$scope.newName = kanbanName;
 		$location.path('/kanban/' + kanbanName);
 		kanbanRepository.save();
-		$scope.switchTo = 'Switch to ...';
+		$translate("SWITCH_TO").then(function successFn(translation) {
+		    $scope.switchTo = translation;
+		});
 	};
 
 	$scope.openHelpShortcut = function($event){
@@ -215,8 +225,11 @@ angular.module('mpk').controller('ApplicationController',
         $scope.selectedToOpen = $scope.newName = currentKanban.name;
 
         $scope.switchToList = $scope.allKanbans.slice(0);
-        $scope.switchToList.splice(0, 0, 'Switch to ...');
-        $scope.switchTo = 'Switch to ...';
+        $translate("SWITCH_TO").then(function successFn(translation) {
+            $scope.switchToList.splice(0, 0, translation);
+            $scope.switchTo = translation;
+        });
+
 
         $scope.$watch('kanban', function(){
             kanbanRepository.save();

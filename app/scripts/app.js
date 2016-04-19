@@ -16,15 +16,6 @@ mpkModule.config(function($routeProvider, $locationProvider, $translateProvider)
 			redirectTo: '/kanban'
 		});
 
-//		$translateProvider.translations('en', {
-//		    CARD_DETAILS: 'Card details',
-//            CARD_TITLE: 'Kanban card title'
-//          })
-//          .translations('nl', {
-//            CARD_DETAILS: 'Kaart details',
-//            CARD_TITLE: 'Kanban kaart titel'
-//          });
-
         $translateProvider.preferredLanguage('nl');
 
         $translateProvider.useStaticFilesLoader({

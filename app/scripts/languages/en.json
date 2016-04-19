@@ -1,4 +1,24 @@
 {
     "CARD_DETAILS" : "Card details",
-    "CARD_TITLE" : "Kanban card title"
+    "CARD_TITLE" : "Kanban card title",
+    "NEW" : "New",
+    "DELETE" : "Delete",
+    "THEMES" : "Themes",
+    "ARCHIVES" : "Archives",
+    "USERS" : "Users",
+    "EXPORT" : "Export",
+    "IMPORT" : "Import",
+    "SWITCH_TO" : "Switch to ...",
+    "AYS_DELETE_KANBAN" : "Are you sure you want to delete the entire Kanban?",
+    "COLUMN_SETTINGS" : "Column settings",
+    "COLUMN_NAME" : "Column name",
+    "TITLE_ON_CARD" : "Title on a card",
+    "COLUMN_COLOR" : "Column color",
+    "COLUMN_CARD_LIMIT" : "Card limit for the column",
+    "ADD_COLUMN_LEFT" : "Add column to the left",
+    "ADD_COLUMN_RIGHT" : "Add column to the right",
+    "DELETE_COLOMN" : "Delete column",
+    "DELETE_COLOMN_CLICK_AGAIN" : "Click again to delete this column",
+    "CLOSE" : "Close",
+    "UPDATE" : "Update"
 }

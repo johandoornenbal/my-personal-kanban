@@ -1,4 +1,24 @@
 {
     "CARD_DETAILS" : "Kaart details",
-    "CARD_TITLE" : "Kanban kaart titel"
+    "CARD_TITLE" : "Kanban kaart titel",
+    "NEW" : "Nieuw",
+    "DELETE" : "Verwijder",
+    "THEMES" : "Vormgeving",
+    "ARCHIVES" : "Archief",
+    "USERS" : "Gebruikers",
+    "EXPORT" : "Exporteer",
+    "IMPORT" : "Importeer",
+    "SWITCH_TO" : "Ga naar ...",
+    "AYS_DELETE_KANBAN" : "Weet je zeker dat je de hele Kanban wilt verwijderen?",
+    "COLUMN_SETTINGS" : "Kolom instellingen",
+    "COLUMN_NAME" : "Kolom naam",
+    "TITLE_ON_CARD" : "Titel van de kaart",
+    "COLUMN_COLOR" : "Kleur van de kolom",
+    "COLUMN_CARD_LIMIT" : "Maximaal aantal kaarten voor deze kolom",
+    "ADD_COLUMN_LEFT" : "Voeg kolom links toe",
+    "ADD_COLUMN_RIGHT" : "Voeg kolom rechts toe",
+    "DELETE_COLOMN" : "Verwijder de kolom",
+    "DELETE_COLOMN_CLICK_AGAIN" : "Klik hier opnieuw om de kolom definitief te verwijderen",
+    "CLOSE" : "Sluit",
+    "UPDATE" : "Werk bij"
 }
