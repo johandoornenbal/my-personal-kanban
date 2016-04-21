@@ -20,5 +20,6 @@
     "DELETE_COLOMN" : "Delete column",
     "DELETE_COLOMN_CLICK_AGAIN" : "Click again to delete this column",
     "CLOSE" : "Close",
-    "UPDATE" : "Update"
+    "UPDATE" : "Update",
+    "NAME_IN_USE" : "This kanban name is already in use; please correct."
 }

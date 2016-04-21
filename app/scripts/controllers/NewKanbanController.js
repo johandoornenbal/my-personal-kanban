@@ -1,6 +1,6 @@
 'use strict';
 
-var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator){
+var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator, $translate){
 	$scope.model = {};
 
 	$scope.$on('OpenNewKanban', function(e, allKanbanNames){
@@ -13,9 +13,18 @@ var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator)
 	});
 
 	$scope.createNew = function(){
+
 		if (!this.newKanbanForm.$valid){
 			return false;
 		}
+
+		if ($scope.model.kanbanNames.indexOf($scope.model.kanbanName) !== -1){
+            $translate("NAME_IN_USE").then(function successFn(translation) {
+                var msg = translation;
+                alert(msg);
+            });
+        	return false;
+        }
 
 		var newKanban = new Kanban($scope.model.kanbanName, $scope.model.numberOfColumns);
 

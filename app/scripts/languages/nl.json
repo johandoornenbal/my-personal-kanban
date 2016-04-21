@@ -20,5 +20,6 @@
     "DELETE_COLOMN" : "Verwijder de kolom",
     "DELETE_COLOMN_CLICK_AGAIN" : "Klik hier opnieuw om de kolom definitief te verwijderen",
     "CLOSE" : "Sluit",
-    "UPDATE" : "Werk bij"
+    "UPDATE" : "Werk bij",
+    "NAME_IN_USE" : "Deze kanban naam is al in gebruik; pas deze aan a.u.b."
 }

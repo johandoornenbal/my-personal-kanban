@@ -163,6 +163,13 @@ angular.module('mpk').controller('ApplicationController',
 	$scope.editingName = false;
 	
 	$scope.rename = function(){
+	    if ($scope.switchToList.indexOf($scope.newName) !== -1){
+            $translate("NAME_IN_USE").then(function successFn(translation) {
+                var msg = translation;
+                alert(msg);
+            });
+            return false;
+        }
 		kanbanRepository.renameLastUsedTo($scope.newName);
 		kanbanRepository.save();
 		
