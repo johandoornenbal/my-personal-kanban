@@ -38,7 +38,6 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
       var prepared = this.prepareSerializedKanbans();
 
       console.log("saving locally");
-      console.log(prepared);
       localStorage.setItem('myPersonalKanban', prepared);
 
       console.log("saving to db");
