@@ -1,8 +1,25 @@
 'use strict';
 
 angular.module('mpk').controller('ApplicationController', 
-	function ApplicationController($scope, $window, kanbanRepository, themesProvider, $routeParams, $location, cloudService, $translate) {
+	function ApplicationController($scope, $window, kanbanRepository, pollingService, themesProvider, $routeParams, $location, cloudService, $translate, $timeout) {
+
 	$scope.colorOptions = ['FFFFFF','DBDBDB','FFB5B5', 'FF9E9E', 'FCC7FC', 'FC9AFB', 'CCD0FC', '989FFA', 'CFFAFC', '9EFAFF', '94D6FF','C1F7C2', 'A2FCA3', 'FAFCD2', 'FAFFA1', 'FCE4D4', 'FCC19D'];
+
+	// <-------- Polling backend for changes ---------------> //
+    var poll = function() {
+        $timeout(function() {
+            if (pollingService.getChange() && pollingService.getSelfChangeInProgress() !== true) {
+                kanbanRepository.restApiLoad().then(function(data){
+                    reload(data);
+                    pollingService.setNoChange();
+                });
+            }
+            console.log('checking pollingService change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
+            poll();
+        }, 3000);
+    };
+    poll();
+
 
 	// <-------- Handling different events in this block ---------------> //
 	$scope.$on('NewKanbanAdded', function(){
@@ -16,6 +33,10 @@ angular.module('mpk').controller('ApplicationController',
 		    $scope.switchToList.splice(0,0,translation);
 		});
 	});
+
+    $scope.stopSelfChange = function(){
+        pollingService.setSelfChangeInProgress(false);
+    }
 
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
@@ -39,7 +60,7 @@ angular.module('mpk').controller('ApplicationController',
 
 	$scope.kanbanMenu = {};
 	$scope.cloudMenu = {};
-	$scope.kanbanMenu.openNewKanban = function(){ 
+	$scope.kanbanMenu.openNewKanban = function(){
 		$scope.$broadcast('OpenNewKanban', allKanbanNames(kanbanRepository));
 	};
 	$scope.kanbanMenu.delete = function(){
@@ -75,7 +96,7 @@ angular.module('mpk').controller('ApplicationController',
 		$scope.$broadcast('OpenArchive', kanban);
 	};
 	$scope.kanbanMenu.openUsers = function (kanban){
-    		$scope.$broadcast('openUsers', kanban);
+    	$scope.$broadcast('openUsers', kanban);
     };
 	$scope.kanbanMenu.openExport = function(allKanbans, kanbanName){
 		$scope.$broadcast('OpenExport', allKanbans, kanbanName);
@@ -253,6 +274,32 @@ angular.module('mpk').controller('ApplicationController',
             themesProvider.setCurrentTheme(kanbanRepository.getTheme());
         }
 
+        $timeout(function() {
+            pollingService.poll();
+        }, 1000);
+
 	});
+
+	var reload = function(data){
+
+        kanbanRepository.kanbansByName = data.kanbans;
+        kanbanRepository.lastUsed = data.lastUsed;
+        kanbanRepository.theme = data.theme;
+        kanbanRepository.lastUpdated = data.lastUpdated;
+
+        currentKanban = kanbanRepository.get($routeParams.kanbanName);
+        $scope.kanban = currentKanban;
+        $scope.allKanbans = Object.keys(kanbanRepository.all());
+        $scope.selectedToOpen = $scope.newName = currentKanban.name;
+
+        $scope.switchToList = $scope.allKanbans.slice(0);
+        $translate("SWITCH_TO").then(function successFn(translation) {
+            $scope.switchToList.splice(0, 0, translation);
+            $scope.switchTo = translation;
+        });
+
+        poll();
+
+    };
 
 });

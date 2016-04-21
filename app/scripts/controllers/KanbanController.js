@@ -1,19 +1,23 @@
 'use strict';
 
-angular.module('mpk').controller('KanbanController', function KanbanController($scope, kanbanManipulator) {
+angular.module('mpk').controller('KanbanController', function KanbanController($scope, kanbanManipulator, pollingService) {
     
     $scope.addNewCard = function(column){
 		$scope.$broadcast('AddNewCard', column);
+		pollingService.setSelfChangeInProgress(true);
 	};
 
 	$scope.delete = function(card, column){
+	    pollingService.setSelfChangeInProgress(true);
 		if (confirm('You sure?')){
 			kanbanManipulator.removeCardFromColumn($scope.kanban, column, card);
 		}
+		pollingService.setSelfChangeInProgress(false);
 	};
     
     $scope.setOwner = function(card){
 		$scope.$broadcast('ChangeOwner', card);
+		pollingService.setSelfChangeInProgress(true);
 	};
 
 	$scope.updateUsers = function(){
@@ -22,6 +26,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	};
 
 	$scope.deleteUser = function(user){
+	    pollingService.setSelfChangeInProgress(true);
     	if (confirm('You sure?')){
          	angular.forEach($scope.kanban.users, function(u){
                if (u.name === user.name){
@@ -29,10 +34,12 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
                }
             });
         }
+        pollingService.setSelfChangeInProgress(false);
     };
 
 	$scope.openCardDetails = function(card){
 		$scope.$broadcast('OpenCardDetails', card);
+		pollingService.setSelfChangeInProgress(true);
 	};
 
 	$scope.detailsFor = function(card){
@@ -73,6 +80,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	};
 
 	$scope.columnSettings = function(kanban, column){
+	    pollingService.setSelfChangeInProgress(true);
 		$scope.$broadcast('OpenColumnSettings', kanban, column);
 	};
 
@@ -86,17 +94,22 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	};
 
 	$scope.$on('DeleteColumn', function(e, column){
+	    pollingService.setSelfChangeInProgress(true);
 		kanbanManipulator.removeColumn($scope.kanban, column);
 		$scope.$emit('ColumnsChanged');
+		pollingService.setSelfChangeInProgress(false);
 	});
 
 	$scope.$on('AddColumn', function(e, column, direction){
+	    pollingService.setSelfChangeInProgress(true);
 		kanbanManipulator.addColumnNextToColumn($scope.kanban, column, direction);
 		$scope.$emit('ColumnsChanged');
 		$scope.$broadcast('CloseColumnSettings');
+		pollingService.setSelfChangeInProgress(false);
 	})
 
 	$scope.$on('openUsers', function(e){
+	    pollingService.setSelfChangeInProgress(true);
 	    $scope.showUsers = true;
 	    $scope.newUser = {};
 	});

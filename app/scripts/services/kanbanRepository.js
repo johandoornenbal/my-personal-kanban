@@ -72,24 +72,45 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
     },
 
     restApiLoad : function() {
-              console.log("loading from db storage");
-              var defer = $q.defer();
-              $http({
-                      method: 'GET',
-                      url: 'http://localhost:8888/my-personal-kanban/backend/api.php',
-                      cache: false,
-                      dataType: "json",
-                      headers: {
-                          'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
-                      }
-                  })
-                  .then(function successCallback(response){
-                        defer.resolve(response.data);
-                  },
-                  function errorCallback(response) {
-                        defer.resolve(response.data);
-                  });
-              return defer.promise;
+          console.log("loading from db storage");
+          var defer = $q.defer();
+          $http({
+                  method: 'GET',
+                  url: 'http://localhost:8888/my-personal-kanban/backend/api.php',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  }
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    restApiPoll : function() {
+//          console.log("Polling backend");
+          var defer = $q.defer();
+          $http({
+                  method: 'GET',
+                  url: 'http://localhost:8888/my-personal-kanban/backend/api.php/servertimelastsave',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  }
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
     },
 
 

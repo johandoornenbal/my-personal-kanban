@@ -1,6 +1,6 @@
 'use strict';
 
-var NewKanbanCardController = function ($scope, kanbanManipulator) {
+var NewKanbanCardController = function ($scope, kanbanManipulator, pollingService) {
 	$scope.master = {title: '', details: '', cardColor: $scope.colorOptions[0]};
 	$scope.newCard = {};
 
@@ -22,9 +22,11 @@ var NewKanbanCardController = function ($scope, kanbanManipulator) {
 
 		
 		$scope.showNewCard = false;
+		pollingService.setSelfChangeInProgress(false);
 
 		return true;
 	};
+
 
 };
 

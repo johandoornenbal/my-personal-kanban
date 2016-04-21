@@ -206,7 +206,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                         <button type="submit" class="btn btn-primary">Add</button>
                     </div>
                 </form>
@@ -264,7 +264,7 @@
                     </div>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                 </div>
             </mpk-modal>
         </div>
@@ -288,7 +288,7 @@
                     </div>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                 </div>
             </mpk-modal>
         </div>
@@ -325,7 +325,7 @@
                     <p>When using existing Kanban as template, <strong>number of columns</strong> and respective <strong>names</strong> will be used.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                     <button type="submit" class="btn btn-primary" ng-click="createNew()">Create new</button>
                 </div>
             </form>
@@ -385,7 +385,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                     <button class="btn btn-primary" type="submit">Switch</button>
                 </div>
             </form>
@@ -424,7 +424,7 @@
             <div class="modal-footer">
                 <button class="btn btn-warning pull-left" ng-click="unarchiveSelected()">Un-archive selected</button>
                 <button class="btn btn-danger pull-left" ng-click="deleteSelected()">Delete selected</button>
-                <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
             </div>
     </div>
 
@@ -449,7 +449,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                     <button class="btn btn-primary" type="submit" ng-click="doExport()">Export</button>
                 </div>
             </form>
@@ -465,7 +465,7 @@
                 </div>
                 <div class="alert alert-warning">If you import Kanban with the name that already exists, all the content of existing Kanban will be lost.</div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                     <button class="btn btn-primary" type="submit" ng-click="import()" ng-disabled="model.file==''">Import</button>
                 </div>
             </form>
@@ -493,7 +493,7 @@
                 <spectrum-colorpicker ng-model="newUser.color" options="{allowEmpty: true}" format="'hex'">
                 </spectrum-colorpicker>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                     <button class="btn btn-primary" type="submit">Save</button>
                 </div>
             </form>
@@ -558,7 +558,7 @@
                     </p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
                     <button class="btn btn-primary" type="submit" ng-disabled="cloudSettings.kanbanKey.$error.validKey">Save settings</button>
                 </div>
 
@@ -592,6 +592,7 @@
 <script src="scripts/app.js"></script>
 <script src="scripts/services/cloudService.js"></script>
 <script src="scripts/services/kanbanRepository.js"></script>
+<script src="scripts/services/pollingService.js"></script>
 <script src="scripts/services/kanbanManipulator.js"></script>
 <script src="scripts/services/themesProvider.js"></script>
 <script src="scripts/services/fileService.js"></script>
