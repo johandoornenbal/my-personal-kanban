@@ -29,7 +29,8 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
     },
 
     prepareSerializedKanbans: function(){
-      var toBeSerialized = {kanbans: this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated};
+      var timestamp = new Date().getTime();
+      var toBeSerialized = {kanbans: this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
       return angular.toJson(toBeSerialized, false);
     },
 
@@ -37,6 +38,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
       var prepared = this.prepareSerializedKanbans();
 
       console.log("saving locally");
+      console.log(prepared);
       localStorage.setItem('myPersonalKanban', prepared);
 
       console.log("saving to db");
