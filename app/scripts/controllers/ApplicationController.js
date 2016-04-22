@@ -61,6 +61,7 @@ angular.module('mpk').controller('ApplicationController',
 	$scope.kanbanMenu = {};
 	$scope.cloudMenu = {};
 	$scope.kanbanMenu.openNewKanban = function(){
+	    pollingService.setSelfChangeInProgress(true);
 		$scope.$broadcast('OpenNewKanban', allKanbanNames(kanbanRepository));
 	};
 	$scope.kanbanMenu.delete = function(){

@@ -1,6 +1,6 @@
 'use strict';
 
-var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator, $translate){
+var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator, $translate, pollingService){
 	$scope.model = {};
 
 	$scope.$on('OpenNewKanban', function(e, allKanbanNames){
@@ -46,6 +46,7 @@ var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator,
 
 		$scope.$emit('NewKanbanAdded');
 		$scope.showNewKanban = false;
+		pollingService.setSelfChangeInProgress(false);
 
 		return true;
 	};
