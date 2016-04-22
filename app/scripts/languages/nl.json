@@ -40,5 +40,9 @@
     "WHEN_USING_HELP" : "Bij gebruik van bestaande kanban als sjabloon, worden",
     "AND_RESPECTIVE" : "en",
     "NAMES" : "Namen",
-    "WILL_BE_USED" : "overgenomen"
+    "WILL_BE_USED" : "overgenomen",
+    "COLUMN" : "Kolom",
+    "CHOOSE_KANBAN_THEME" : "Kies een kanban thema",
+    "SWITCH" : "Wissel",
+    "THEMES_TO_CHOOSE_FROM" : "Thema om uit te kiezen"
 }

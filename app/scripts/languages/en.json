@@ -40,5 +40,9 @@
     "WHEN_USING_HELP" : "When using existing Kanban as template,",
     "AND_RESPECTIVE" : "and respective ",
     "NAMES" : "names",
-    "WILL_BE_USED" : "will be used"
+    "WILL_BE_USED" : "will be used",
+    "COLUMN" : "Column",
+    "CHOOSE_KANBAN_THEME" : "Choose kanban theme",
+    "SWITCH" : "Switch",
+    "THEMES_TO_CHOOSE_FROM" : "Themes to choose from"
 }

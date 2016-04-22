@@ -1,6 +1,6 @@
 'use strict';
 
-var SwitchThemeController = function ($scope, themesProvider, kanbanRepository) {
+var SwitchThemeController = function ($scope, themesProvider, kanbanRepository, pollingService) {
 	$scope.model = {};
 	$scope.model.themes = themesProvider.getThemes();
 	
@@ -14,10 +14,14 @@ var SwitchThemeController = function ($scope, themesProvider, kanbanRepository) 
 	$scope.switchTheme = function(){
 		themesProvider.setCurrentTheme($scope.model.selectedTheme);
 		kanbanRepository.setTheme($scope.model.selectedTheme);
+		pollingService.setSelfChangeInProgress(false);
 	};
 
 	$scope.$on('OpenSwitchTheme', function(){
+
+	    pollingService.setSelfChangeInProgress(true);
 		$scope.showSwitchTheme = true;
+
 	});
 
 };

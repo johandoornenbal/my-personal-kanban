@@ -32,9 +32,12 @@ var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator,
 			var templateKanban = kanbanRepository.all()[$scope.model.useTemplate];
 			newKanban = kanbanManipulator.createNewFromTemplate(templateKanban, $scope.model.kanbanName);
 		} else {
-			for (var i=1;i<parseInt($scope.model.numberOfColumns)+1;i++){
-				kanbanManipulator.addColumn(newKanban, 'Column '+i);
-			}
+            $translate("COLUMN").then(function successFn(translation) {
+                var column = translation;
+                for (var i=1;i<parseInt($scope.model.numberOfColumns)+1;i++){
+                    kanbanManipulator.addColumn(newKanban, column + ' ' + i);
+                }
+            });
 		}
 
 		kanbanRepository.add(newKanban);

@@ -178,7 +178,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger pull-left" ng-hide="model.showWarning" ng-click="delete()">{{ 'DELETE_COLOMN' | translate}}</button>
                         <button type="button" class="btn btn-danger pull-left" ng-show="model.showWarning" ng-click="delete()" ng-disabled="model.deleteDisabled">{{ 'DELETE_COLOMN_CLICK_AGAIN' | translate}} <i class="glyphicon glyphicon-exclamation-sign"></i></button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
                         <button type="submit" class="btn btn-primary">{{ 'UPDATE' | translate }}</button>
                     </div>
                 </form>
@@ -389,11 +389,12 @@
         <!--</p>-->
     </mpk-modal>
 
+    <!-- SWITCH THEME MODAL -->
     <div ng-controller="SwitchThemeController">
-        <mpk-modal title="Choose Kanban Theme" visible="showSwitchTheme">
+        <mpk-modal title="CHOOSE_KANBAN_THEME" visible="showSwitchTheme">
             <form ng-submit="switchTheme()" name="selectTheme" class="noMargin">
                 <div class="form-group">
-                    <label class="control-label" for="kanbanTheme">Themes to choose from</label>
+                    <label class="control-label" for="kanbanTheme">{{ 'THEMES_TO_CHOOSE_FROM' | translate }}</label>
                 </div>
                 <div class="row">
                     <div class="col-md-5">
@@ -405,8 +406,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
-                    <button class="btn btn-primary" type="submit">Switch</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button class="btn btn-primary" type="submit">{{ 'SWITCH' | translate }}</button>
                 </div>
             </form>
         </mpk-modal>
