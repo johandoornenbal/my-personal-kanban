@@ -64,6 +64,8 @@
     "ADD_USER" : "Add user",
     "NAME" : "Name",
     "INITALS" : "Initals",
-    "COLOR" : "Color"
+    "COLOR" : "Color",
+    "USER_KANBAN_LINK" : "Link to user kanban board",
+    "NEW_COLUMN" : "New column"
 
 }

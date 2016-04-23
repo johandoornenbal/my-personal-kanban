@@ -38,7 +38,7 @@
         <div class="navbar-inner">
             <div class="container">
                 <!--KANBAN MENU -->
-                <div class="navbar-header col-md-3">
+                <div class="navbar-header col-md-8">
                     <span id="kanbanName" class="navbar-brand" ng-model="kanban" ng-hide="editingName"><a class="renameKanban" ng-click="editingKanbanName()">{{kanban.name}}</a></span>
                     <div ng-show="editingName" class="pull-left">
                         <form ng-submit="rename()">
@@ -50,9 +50,10 @@
                             </div>
                         </form>
                     </div>
+                    <span class="small"><a href="../app/#/kanban/{{kanban.id}}" target="_blank">{{ 'USER_KANBAN_LINK' | translate}}: {{kanban.id}}</a></span>
                 </div>
                 <!--KANBAN MENU -->
-                <div class="col-md-9">
+                <div class="col-md-4">
                     <ul class="nav navbar-nav pull-right" id="menu">
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown">Kanban<span class="caret"></span></a>

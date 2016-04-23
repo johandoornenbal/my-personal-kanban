@@ -101,9 +101,9 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 		pollingService.setSelfChangeInProgress(false);
 	});
 
-	$scope.$on('AddColumn', function(e, column, direction){
+	$scope.$on('AddColumn', function(e, column, direction, label){
 	    pollingService.setSelfChangeInProgress(true);
-		kanbanManipulator.addColumnNextToColumn($scope.kanban, column, direction);
+		kanbanManipulator.addColumnNextToColumn($scope.kanban, column, direction, label);
 		$scope.$emit('ColumnsChanged');
 		$scope.$broadcast('CloseColumnSettings');
 		pollingService.setSelfChangeInProgress(false);

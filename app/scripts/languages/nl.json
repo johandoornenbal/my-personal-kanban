@@ -64,5 +64,7 @@
     "ADD_USER" : "Voeg gebruiker toe",
     "NAME" : "Naam",
     "INITALS" : "Initialen",
-    "COLOR" : "Kleur"
+    "COLOR" : "Kleur",
+    "USER_KANBAN_LINK" : "Link naar het gebruikers kanban bord",
+    "NEW_COLUMN" : "Nieuwe kolom"
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-var ColumnSettingsController = function ($scope, $timeout) {
+var ColumnSettingsController = function ($scope, $timeout, $translate) {
 	$scope.model = {column: {}, kanban: {}, columnName: '', color: '', limit: '', showWarning: false, deleteDisabled: true};
 
 	$scope.$on('OpenColumnSettings', function(e, kanban, column){
@@ -44,7 +44,9 @@ var ColumnSettingsController = function ($scope, $timeout) {
 	};
 
 	$scope.addColumn = function(direction){
-		$scope.$emit('AddColumn', $scope.model.column, direction);
+        $translate("NEW_COLUMN").then(function successFn(translation) {
+            $scope.$emit('AddColumn', $scope.model.column, direction, translation, translation);
+        });
 	}
 };
 
