@@ -18,7 +18,7 @@ class KanbanAPI {
         $this->db->close();
     }
 
-    function storeAll($json, $timestamp, $servertimestamp) {
+    function store($kanbanId, $json, $timestamp, $servertimestamp) {
         if ($json == ''){
             sendResponse(400, 'No valid Json received and stored');
             return false;
@@ -29,74 +29,36 @@ class KanbanAPI {
             'timestamp' => $timestamp,
             'servertimestamp' => $servertimestamp
         );
+        $this->db->where ('id', $kanbanId);
+        if ($this->db->update ('kanban', $data))
+            sendResponse(200, 'Single Json stored ');
+        else
+            sendResponse(400, 'ERROR: could not store Single json ');
+
+        $dataAll = Array (
+            'servertimestamp' => $servertimestamp
+        );
         $this->db->where ('id', 1);
         if ($this->db->update ('kanbanAll', $data))
-            sendResponse(200, 'Json stored ');
+            sendResponse(200, 'server timestamp stored ');
         else
-            sendResponse(400, 'ERROR: could not store json ');
+            sendResponse(400, 'ERROR: could not store server timestamp ');
                 
         return true;
     }
-    
-    function updateOrCreate($id, $json, $timestamp, $servertimestamp) {
-        if ($json == ''){
-            sendResponse(400, 'No valid Json received and stored');
-            return false;
-        }
-        sendResponse(200, 'Json received ');
+
+    function load($id) {
         $this->db->where ("id", $id);
         $result = $this->db->getOne ("kanban");
-        if ($result) {
-            $data = Array (
-            'json' => $json,
-            'timestamp' => $timestamp,
-            'servertimestamp' => $servertimestamp
-            );
-            $this->db->where ('id', $id);
-            if ($this->db->update ('kanban', $data))
-            {
-                sendResponse(200, 'Json updated ');
-            } else {
-                sendResponse(400, 'ERROR: could not update json ');
-            }
-        } 
-        else 
-        {
-            unset($this->db->where);
-            $insertData = Array (
-                'id' => $id,
-                'json' => $json,
-                'timestamp' => $timestamp,
-                'servertimestamp' => $servertimestamp
-            );
-            if ($this->db->insert ('kanban', $insertData)) {
-                sendResponse(200, 'Json stored ');
-            } else {
-                sendResponse(400, 'ERROR: could not store new json ');
-            }
-        }
-                
-        return true;
-    }
-
-    function loadAll() {
-        $this->db->where ("id", 1);
-        $allKanbanResult = $this->db->getOne ("kanbanAll");
-
-        unset($this->db->where);
-        $allKanbans = $this->db->get ("kanban");
-        foreach ($allKanbans as $kanban){
-            $kanbanObj = json_decode($kanban['json'], false);
-            $name=$kanbanObj->singlekanban->name;
-            $kanbansResult->kanbans->$name = $kanbanObj->singlekanban;
-        }
-        $kanbansResult = (object) array_merge((array)$kanbansResult, array( 'timestamp' => $allKanbanResult['timestamp'] ));
-        $kanbansResult = (object) array_merge((array)$kanbansResult, array( 'servertimestamp' => $allKanbanResult['servertimestamp'] ));
-        $jsonResult = json_encode($kanbansResult);
+        $jsonObject = json_decode($result['json'], false);
+        $singleKanbanResult = $jsonObject;
+        // add servertimestamp to result to send back as response
+        $singleKanbanResult = (object) array_merge( (array)$singleKanbanResult, array( 'servertimestamp' => $result['servertimestamp'] ) );
+        $jsonResult = json_encode($singleKanbanResult);
         sendResponse(200, $jsonResult);
         return true;
     }
-    
+        
     function servertimelastsave() {
         $this->db->where ("id", 1);
         $result = $this->db->getOne ("kanbanAll");
@@ -130,12 +92,8 @@ if (($stream = fopen('php://input', "r")) !== FALSE)
 // Now storing raw json string
 // Only decode for timestamp
 $json = json_decode($content, false);
+$kanbanId = $json->singlekanban->id;
 $timestamp = $json->timestamp;
-$allKanbans = array();
-foreach ($json->kanbans as $kanban){
-    $allKanbans[] = $kanban;
-}
-$serializedKanbansByUUID = serialize($kanbansByUUID);
 $serverTime = intval(microtime(true)*1000);
 
 // db connection
@@ -160,7 +118,7 @@ switch ($method) {
             break;    
             
             default:
-                $api->loadAll();
+                $api->load($requestEndPoint);
             break;
             
         }
@@ -168,12 +126,7 @@ switch ($method) {
         break;
         
     case "POST":
-        $api->storeAll($content, $timestamp, $serverTime);
-        foreach($allKanbans as $kanban){
-            $resultObj->singlekanban = $kanban;
-            $json = json_encode($resultObj);
-            $api->updateOrCreate($kanban->id, $json, $timestamp, $serverTime);
-        }
+        $api->store($kanbanId, $content, $timestamp, $serverTime);
         break;
         
     default:

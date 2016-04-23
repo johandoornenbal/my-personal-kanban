@@ -21,6 +21,10 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
       return this.kanbansByName[kanbanName];
     },
 
+    getSingle: function(){
+        return this.kanbansByName;
+    },
+
     remove: function(kanbanName) {
       if (this.kanbansByName[kanbanName]){
         delete this.kanbansByName[kanbanName];
@@ -31,6 +35,12 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
     prepareSerializedKanbans: function(){
       var timestamp = new Date().getTime();
       var toBeSerialized = {kanbans: this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
+      return angular.toJson(toBeSerialized, false);
+    },
+
+    prepareSingleSerializedKanban: function(){
+      var timestamp = new Date().getTime();
+      var toBeSerialized = {singlekanban : this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
       return angular.toJson(toBeSerialized, false);
     },
 
@@ -48,6 +58,22 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
       });
 
       return this.kanbansByName;
+    },
+
+    saveSingle: function(){
+          var prepared = this.prepareSingleSerializedKanban();
+
+          console.log("saving single kanban locally");
+          localStorage.setItem('mySinglePersonalKanban', prepared);
+
+          console.log("saving to single kanban db");
+
+          var result = this.singleRestApiSave(prepared);
+          result.then(function(data){
+            console.log(data);
+          });
+
+          return this.kanbansByName;
     },
 
     restApiSave : function(payload) {
@@ -77,6 +103,48 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           $http({
                   method: 'GET',
                   url: 'http://localhost:8888/my-personal-kanban/backend/adminApi.php',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  }
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    singleRestApiSave : function(payload) {
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: 'http://localhost:8888/my-personal-kanban/backend/api.php',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    singleRestApiLoad : function($uuid) {
+          console.log("loading from db storage");
+          var defer = $q.defer();
+          $http({
+                  method: 'GET',
+                  url: 'http://localhost:8888/my-personal-kanban/backend/api.php/' + $uuid,
                   cache: false,
                   dataType: "json",
                   headers: {
