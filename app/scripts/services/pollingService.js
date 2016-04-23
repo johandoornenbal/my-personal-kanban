@@ -6,6 +6,8 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
       var polledTimeStamp;
       var poll;
       var change = false;
+      // this var can be set in order to give a controller using the service a clue that
+      // possible changes from backend could conflict with the editing (possibly) going on
       var selfChangeInProgress = false;
 
       return {

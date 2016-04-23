@@ -177,7 +177,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger pull-left" ng-hide="model.showWarning" ng-click="delete()">{{ 'DELETE_COLOMN' | translate}}</button>
                         <button type="button" class="btn btn-danger pull-left" ng-show="model.showWarning" ng-click="delete()" ng-disabled="model.deleteDisabled">{{ 'DELETE_COLOMN_CLICK_AGAIN' | translate}} <i class="glyphicon glyphicon-exclamation-sign"></i></button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
                         <button type="submit" class="btn btn-primary">{{ 'UPDATE' | translate }}</button>
                     </div>
                 </form>
@@ -222,7 +222,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
                         <button type="submit" class="btn btn-primary">{{ 'ADD' | translate }}</button>
                     </div>
                 </form>
@@ -281,7 +281,7 @@
                     </div>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
                 </div>
             </mpk-modal>
         </div>
@@ -306,7 +306,7 @@
                     </div>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
                 </div>
             </mpk-modal>
         </div>
@@ -344,7 +344,7 @@
                     <p>{{ 'WHEN_USING_HELP' | translate }} <strong>{{ 'NUMBER_COLUMNS' | translate }}</strong> {{ 'AND_RESPECTIVE' | translate }} <strong>{{ 'NAMES' | translate }}</strong> {{ 'WILL_BE_USED' | translate }}.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
                     <button type="submit" class="btn btn-primary" ng-click="createNew()">{{ 'CREATE_NEW' | translate }}</button>
                 </div>
             </form>
@@ -405,7 +405,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
                     <button class="btn btn-primary" type="submit">{{ 'SWITCH' | translate }}</button>
                 </div>
             </form>
@@ -445,7 +445,7 @@
             <div class="modal-footer">
                 <button class="btn btn-warning pull-left" ng-click="unarchiveSelected()">{{ 'UNARCHIVE_SELECTED' | translate }}</button>
                 <button class="btn btn-danger pull-left" ng-click="deleteSelected()">{{ 'DELETE_SELECTED' | translate }}</button>
-                <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                <button class="btn btn-default" type="button" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
             </div>
         </mpk-modal>
     </div>
@@ -472,7 +472,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
                     <button class="btn btn-primary" type="submit" ng-click="doExport()">{{ 'EXPORT' | translate }}</button>
                 </div>
             </form>
@@ -489,7 +489,7 @@
                 </div>
                 <div class="alert alert-warning">{{ 'IMPORT_WARNING' | translate }}</div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
                     <button class="btn btn-primary" type="submit" ng-click="import()" ng-disabled="model.file==''">{{ 'IMPORT' | translate }}</button>
                 </div>
             </form>
@@ -517,7 +517,7 @@
                 <spectrum-colorpicker ng-model="newUser.color" options="{allowEmpty: true}" format="'hex'">
                 </spectrum-colorpicker>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'READY' | translate }}</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal">{{ 'READY' | translate }}</button>
                     <button class="btn btn-primary" type="submit">{{ 'ADD_USER' | translate }}</button>
                 </div>
             </form>
@@ -525,6 +525,7 @@
     </div>
 
     <!-- Cloud stuff from here -->
+    <!--
     <div ng-controller="SetupCloudController">
         <mpk-modal title="Cloud Setup" visible="showCloudSetup">
             <form ng-submit="saveSettings()" name="cloudSettings" class="noMargin">
@@ -589,6 +590,7 @@
             </form>
         </mpk-modal>
     </div>
+    -->
 
 </script>
 <footer></footer>

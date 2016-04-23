@@ -34,10 +34,6 @@ angular.module('mpk').controller('ApplicationController',
 		});
 	});
 
-    $scope.stopSelfChange = function(){
-        pollingService.setSelfChangeInProgress(false);
-    }
-
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 	});
@@ -302,5 +298,9 @@ angular.module('mpk').controller('ApplicationController',
         poll();
 
     };
+
+    $scope.$watch('modalOpen', function(){
+        console.log($scope.modalOpen);
+    }, true);
 
 });

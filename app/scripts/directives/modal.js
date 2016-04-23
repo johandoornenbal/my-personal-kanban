@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mpk').directive('mpkModal', function () {
+angular.module('mpk').directive('mpkModal', function (pollingService) {
 	return {
       template: '<div class="modal fade">' + 
           '<div class="modal-dialog" style="{{ style }}" >' + 
@@ -34,12 +34,18 @@ angular.module('mpk').directive('mpkModal', function () {
         $(element).on('shown.bs.modal', function(){
           scope.$apply(function(){
             scope.$parent[attrs.visible] = true;
+            // when any modal open, pollingService is told that selfchange is in progress
+            // this var can be (and is being) used by application controller in order to prevent
+            // loading changes from RestApi
+            pollingService.setSelfChangeInProgress(true);
           });
         });
 
         $(element).on('hidden.bs.modal', function(){
           scope.$apply(function(){
             scope.$parent[attrs.visible] = false;
+            // when any modal closed, pollingService is told that selfchange is done
+            pollingService.setSelfChangeInProgress(false);
           });
         });
       }
