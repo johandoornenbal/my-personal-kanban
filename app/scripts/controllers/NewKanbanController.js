@@ -1,6 +1,6 @@
 'use strict';
 
-var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator, $translate, pollingService){
+var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator, $translate, pollingService, uuidService){
 	$scope.model = {};
 
 	$scope.$on('OpenNewKanban', function(e, allKanbanNames){
@@ -8,7 +8,7 @@ var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator,
 		$scope.model.kanbanName = '';
 		$scope.model.numberOfColumns = 3;
 		$scope.model.useTemplate = '';
-		$scope.model.id = kanbanRepository.generateUUID();
+		$scope.model.id = uuidService.generateUUID();
 
 		$scope.showNewKanban = true;
 	});

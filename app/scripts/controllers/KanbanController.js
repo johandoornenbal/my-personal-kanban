@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mpk').controller('KanbanController', function KanbanController($scope, kanbanManipulator, pollingService, kanbanRepository) {
+angular.module('mpk').controller('KanbanController', function KanbanController($scope, kanbanManipulator, pollingService, uuidService) {
     
     $scope.addNewCard = function(column){
 		$scope.$broadcast('AddNewCard', column);
@@ -21,7 +21,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	};
 
 	$scope.updateUsers = function(){
-	    $scope.newUser.id = kanbanRepository.generateUUID();
+	    $scope.newUser.id = uuidService.generateUUID();
 	    $scope.kanban.users.push($scope.newUser);
 	    $scope.newUser = {};
 	};
