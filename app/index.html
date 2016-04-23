@@ -413,12 +413,13 @@
         </mpk-modal>
     </div>
 
+    <!-- ARCHIVE MODAL -->
     <div ng-controller="ArchiveController">
-        <mpk-modal title="Cards Archive" visible="showArchive" modal-style="width: 90%;">
+        <mpk-modal title="CARDS_ARCHIVE" visible="showArchive" modal-style="width: 90%;">
             <form class="form-horizontal" role="form">
                 <div class="form-group has-success">
                     <div class="col-md-offset-9 col-md-3">
-                        <input type="text" name="filterByName" placeholder="Filter by card name ..." ng-model="model.filterByName" class="form-control"/>
+                        <input type="text" name="filterByName" placeholder="{{ 'FILTER_BY_CARD_NAME' | translate }}" ng-model="model.filterByName" class="form-control"/>
                     </div>
                 </div>
             </form>
@@ -426,10 +427,10 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th style="width: 25%">Archived on</th>
-                    <th style="width: 33%">Card title</th>
-                    <th style="width: 30%">Description</th>
-                    <th style="width: 10%">Owner</th>
+                    <th style="width: 25%">{{ 'ARCHIVED_ON' | translate }}</th>
+                    <th style="width: 33%">{{ 'CARD_TITLE' | translate }}</th>
+                    <th style="width: 30%">{{ 'CARD_DETAILS' | translate }}</th>
+                    <th style="width: 10%">{{ 'CARD_OWNER' | translate }}</th>
                 </tr>
                 </thead>
                 <tr ng-repeat="archivedCard in model.archived | archiveByCardName:model.filterByName">
@@ -443,17 +444,19 @@
                 </tbody>
             </table>
             <div class="modal-footer">
-                <button class="btn btn-warning pull-left" ng-click="unarchiveSelected()">Un-archive selected</button>
-                <button class="btn btn-danger pull-left" ng-click="deleteSelected()">Delete selected</button>
-                <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
+                <button class="btn btn-warning pull-left" ng-click="unarchiveSelected()">{{ 'UNARCHIVE_SELECTED' | translate }}</button>
+                <button class="btn btn-danger pull-left" ng-click="deleteSelected()">{{ 'DELETE_SELECTED' | translate }}</button>
+                <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
             </div>
+        </mpk-modal>
     </div>
 
+    <!-- EXPORT MODAL -->
     <div ng-controller="ExportController">
-        <mpk-modal visible="showExportModal" title="Export Kanban">
+        <mpk-modal visible="showExportModal" title="EXPORT_KANBAN">
             <form name="exportKanban" class="noMargin">
                 <div class="form-group">
-                    <label class="control-label" for="kanbanToExport">To export:</label>
+                    <label class="control-label" for="kanbanToExport">{{ 'TO_EXPORT' | translate }}:</label>
                     <div>
                         <select id="kanbanToExport" ng-model="model.selectedKanban" class="form-control"
                                 ng-options="name for name in model.allKanbanNames" ng-disabled="model.exportAll">
@@ -464,38 +467,39 @@
                     <div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" ng-model="model.exportAll"> Export all Kanbans
+                                <input type="checkbox" ng-model="model.exportAll"> {{ 'EXPORT_ALL_KANBANS' | translate }}
                             </label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
-                    <button class="btn btn-primary" type="submit" ng-click="doExport()">Export</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button class="btn btn-primary" type="submit" ng-click="doExport()">{{ 'EXPORT' | translate }}</button>
                 </div>
             </form>
         </mpk-modal>
     </div>
 
+    <!-- IMPORT MODAL -->
     <div ng-controller="ImportController">
-        <mpk-modal visible="showImportModal" title="Import Kanban from file">
+        <mpk-modal visible="showImportModal" title="IMPORT_KANBAN_FROM_FILE">
             <form name="importKanban" class="noMargin">
                 <div class="form-group">
-                    <label class="control-label" for="kanbanToExport">Select file:</label>
+                    <label class="control-label" for="kanbanToExport">{{ 'SELECT_FILE' | translate }}:</label>
                     <input type="file" id="kanbanFile" name="kanbanFile" read-file ng-model="model.file" ng-change="model.fileSelected=true"/>
                 </div>
-                <div class="alert alert-warning">If you import Kanban with the name that already exists, all the content of existing Kanban will be lost.</div>
+                <div class="alert alert-warning">{{ 'IMPORT_WARNING' | translate }}</div>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
-                    <button class="btn btn-primary" type="submit" ng-click="import()" ng-disabled="model.file==''">Import</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'CLOSE' | translate }}</button>
+                    <button class="btn btn-primary" type="submit" ng-click="import()" ng-disabled="model.file==''">{{ 'IMPORT' | translate }}</button>
                 </div>
             </form>
         </mpk-modal>
     </div>
 
-
+    <!-- MANAGE USERS MODAL -->
     <div ng-controller="KanbanController">
-        <mpk-modal visible="showUsers" title="Manage Kanban users">
+        <mpk-modal visible="showUsers" title="MANAGE_KANBAN_USERS">
             <ul ng-class="">
                 <li class="card" ng-repeat="user in kanban.users">
                     <span class="pull-left"><i class="h5" style="border: solid 4px {{user.color}}; padding: 2px; margin-right: 5px;">{{user.initials}}</i></span>
@@ -505,17 +509,17 @@
             </ul>
             <form name="manageUser" class="noMargin" ng-submit="updateUsers()">
                 <div class="form-group">
-                    <label class="control-label" for="newUser">Add new user:</label>
+                    <label class="control-label" for="newUser">{{ 'ADD_NEW_USER' | translate }}:</label>
                 </div>
-                <input type="text" id="newUser" name="newUser" ng-model="newUser.name" required class="form-control" placeholder="name"/>
-                <input type="text" id="newUserInitials" name="newUserInitials" ng-model="newUser.initials" required class="form-control" placeholder="initials"/>
+                <input type="text" id="newUser" name="newUser" ng-model="newUser.name" required class="form-control" placeholder="{{ 'NAME' | translate }}"/>
+                <input type="text" id="newUserInitials" name="newUserInitials" ng-model="newUser.initials" required class="form-control" placeholder="{{ 'INITALS' | translate }}"/>
                 <!--<input type="text" id="newUserIcon" name="newUserIcon" ng-model="newUser.icon" class="form-control" placeholder="icon"/>-->
-                <input type="text" id="newUserColor" name="newUserColor" ng-model="newUser.color" class="form-control" placeholder="color"/>
+                <input type="text" id="newUserColor" name="newUserColor" ng-model="newUser.color" class="form-control" placeholder="{{ 'COLOR' | translate }}"/>
                 <spectrum-colorpicker ng-model="newUser.color" options="{allowEmpty: true}" format="'hex'">
                 </spectrum-colorpicker>
                 <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
-                    <button class="btn btn-primary" type="submit">Save</button>
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">{{ 'READY' | translate }}</button>
+                    <button class="btn btn-primary" type="submit">{{ 'ADD_USER' | translate }}</button>
                 </div>
             </form>
         </mpk-modal>

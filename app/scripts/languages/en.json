@@ -44,5 +44,26 @@
     "COLUMN" : "Column",
     "CHOOSE_KANBAN_THEME" : "Choose kanban theme",
     "SWITCH" : "Switch",
-    "THEMES_TO_CHOOSE_FROM" : "Themes to choose from"
+    "THEMES_TO_CHOOSE_FROM" : "Themes to choose from",
+    "CARDS_ARCHIVE" : "Cards archive",
+    "FILTER_BY_CARD_NAME" : "filter by cardname ...",
+    "ARCHIVED_ON" : "Archived on",
+    "UNARCHIVE_SELECTED" : "Un-archive selected",
+    "DELETE_SELECTED" : "Delete selected",
+    "EXPORT_KANBAN" : "Export kanban",
+    "TO_EXPORT" : "To export",
+    "EXPORT_ALL_KANBANS" : "Export all kanbans",
+    "EXPORT" : "Export",
+    "IMPORT_KANBAN_FROM_FILE" : "Import kanban from file",
+    "SELECT_FILE" : "Select file",
+    "IMPORT_WARNING" : "If you import Kanban with a name that already exists, all the content of existing Kanban will be lost.",
+    "IMPORT" : "Importeer",
+    "MANAGE_KANBAN_USERS" : "Manage kanban users",
+    "ADD_NEW_USER" : "Add new user",
+    "READY" : "Ready",
+    "ADD_USER" : "Add user",
+    "NAME" : "Name",
+    "INITALS" : "Initals",
+    "COLOR" : "Color"
+
 }
