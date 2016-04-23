@@ -64,7 +64,7 @@ angular.module('mpk').controller('ApplicationController',
 	$scope.kanbanMenu.delete = function(){
 	    $translate("AYS_DELETE_KANBAN").then(function successFn(translation) {
             if (confirm(translation)){
-                kanbanRepository.remove($scope.kanban.name, $scope.kanban.id);
+                kanbanRepository.remove($scope.kanban.name);
                 var all = allKanbanNames(kanbanRepository);
 
                 if (all.length > 0){
@@ -273,7 +273,6 @@ angular.module('mpk').controller('ApplicationController',
         loadedRepo = kanbanRepository.restApiLoad().then(function(data){
 
             kanbanRepository.kanbansByName = data.kanbans;
-            kanbanRepository.kanbansById = data.kanbansById;
             kanbanRepository.lastUsed = data.lastUsed;
             kanbanRepository.theme = data.theme;
             kanbanRepository.lastUpdated = data.lastUpdated;

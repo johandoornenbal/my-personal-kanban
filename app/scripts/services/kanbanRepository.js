@@ -3,14 +3,12 @@
 angular.module('mpk').factory('kanbanRepository', function (cloudService, cryptoService, $http, $q) {
   return {
     kanbansByName : {},
-    kanbansById : {},
     lastUsed : '',
     theme: 'default-dark',
     lastUpdated: 0,
     
     add: function(kanban){
       this.kanbansByName[kanban.name] = kanban;
-      this.kanbansById[kanban.id] = kanban;
       this.save();
       return kanban;
     },
@@ -23,23 +21,16 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
       return this.kanbansByName[kanbanName];
     },
 
-    getById: function(id){
-        return this.kanbansById[id];
-    },
-
-    remove: function(kanbanName, id) {
+    remove: function(kanbanName) {
       if (this.kanbansByName[kanbanName]){
         delete this.kanbansByName[kanbanName];
-      }
-      if (this.kanbansById[id]){
-        delete this.kanbansById[id];
       }
       return this.kanbansByName;
     },
 
     prepareSerializedKanbans: function(){
       var timestamp = new Date().getTime();
-      var toBeSerialized = {kanbans: this.kanbansByName, kanbansById: this.kanbansById, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
+      var toBeSerialized = {kanbans: this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
       return angular.toJson(toBeSerialized, false);
     },
 
@@ -63,7 +54,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           var defer = $q.defer();
           $http({
                   method: 'POST',
-                  url: 'http://localhost:8888/my-personal-kanban/backend/api.php',
+                  url: 'http://localhost:8888/my-personal-kanban/backend/adminApi.php',
                   cache: false,
                   dataType: "json",
                   headers: {
@@ -85,7 +76,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           var defer = $q.defer();
           $http({
                   method: 'GET',
-                  url: 'http://localhost:8888/my-personal-kanban/backend/api.php',
+                  url: 'http://localhost:8888/my-personal-kanban/backend/adminApi.php',
                   cache: false,
                   dataType: "json",
                   headers: {
@@ -106,7 +97,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           var defer = $q.defer();
           $http({
                   method: 'GET',
-                  url: 'http://localhost:8888/my-personal-kanban/backend/api.php/servertimelastsave',
+                  url: 'http://localhost:8888/my-personal-kanban/backend/adminApi.php/servertimelastsave',
                   cache: false,
                   dataType: "json",
                   headers: {
