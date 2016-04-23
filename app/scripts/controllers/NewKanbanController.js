@@ -31,7 +31,7 @@ var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator,
 
 		if ($scope.model.useTemplate != ''){
 			var templateKanban = kanbanRepository.all()[$scope.model.useTemplate];
-			newKanban = kanbanManipulator.createNewFromTemplate(templateKanban, $scope.model.kanbanName);
+			newKanban = kanbanManipulator.createNewFromTemplate(templateKanban, $scope.model.id, $scope.model.kanbanName);
 		} else {
             $translate("COLUMN").then(function successFn(translation) {
                 var column = translation;

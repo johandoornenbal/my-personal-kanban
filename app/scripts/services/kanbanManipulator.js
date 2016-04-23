@@ -50,8 +50,8 @@ angular.module('mpk').factory('kanbanManipulator', function () {
       kanban.archived.splice(kanban.archived.indexOf(archivedCard), 1); 
     },
 
-    createNewFromTemplate: function(kanban, newName){
-      var newKanban = new Kanban(newName, kanban.columns.length);
+    createNewFromTemplate: function(kanban, newId, newName){
+      var newKanban = new Kanban(newId, newName, kanban.columns.length);
       angular.forEach(kanban.columns, function(col) {
         newKanban.columns.push(new KanbanColumn(col.name, col.settings));
       });
