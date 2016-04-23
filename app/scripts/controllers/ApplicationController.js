@@ -255,7 +255,6 @@ angular.module('mpk').controller('ApplicationController',
             $scope.switchTo = translation;
         });
 
-
         $scope.$watch('kanban', function(){
             kanbanRepository.save();
         }, true);
@@ -284,6 +283,15 @@ angular.module('mpk').controller('ApplicationController',
         kanbanRepository.theme = data.theme;
         kanbanRepository.lastUpdated = data.lastUpdated;
 
+        if (loadedRepo){
+            if ($routeParams.kanbanName != undefined && kanbanRepository.get($routeParams.kanbanName)) {
+                currentKanban = kanbanRepository.get($routeParams.kanbanName);
+            } else if (kanbanRepository.getLastUsed() != undefined	) {
+                currentKanban = kanbanRepository.getLastUsed();
+                $location.path('/kanban/' + currentKanban.name);
+            }
+        }
+
         currentKanban = kanbanRepository.get($routeParams.kanbanName);
         $scope.kanban = currentKanban;
         $scope.allKanbans = Object.keys(kanbanRepository.all());
@@ -295,12 +303,13 @@ angular.module('mpk').controller('ApplicationController',
             $scope.switchTo = translation;
         });
 
-        poll();
+        $scope.columnHeight = angular.element($window).height() - 110;
+        $scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
+
+        if (kanbanRepository.getTheme() != undefined && kanbanRepository.getTheme() != ''){
+            themesProvider.setCurrentTheme(kanbanRepository.getTheme());
+        }
 
     };
-
-    $scope.$watch('modalOpen', function(){
-        console.log($scope.modalOpen);
-    }, true);
 
 });
