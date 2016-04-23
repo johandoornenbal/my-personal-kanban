@@ -1,6 +1,7 @@
 'use strict';
-function Kanban(name, numberOfColumns) {
+function Kanban(id, name, numberOfColumns) {
 	return {
+	    id: id,
 		name: name,
 		numberOfColumns: numberOfColumns,
 		columns: [],
@@ -26,7 +27,8 @@ function KanbanColumn(name, settings){
 	};
 }
 
-function KanbanCard(name, details, color, owner){
+function KanbanCard(id, name, details, color, owner){
+    this.id = id;
 	this.name = name;
 	this.details = details;
 	this.color = color;
@@ -34,7 +36,8 @@ function KanbanCard(name, details, color, owner){
 	return this;
 }
 
-function KanbanUser(name, initials, icon, color){
+function KanbanUser(id, name, initials, icon, color){
+    this.id = id;
 	this.name = name;
 	this.initials = initials;
 	this.icon = icon;

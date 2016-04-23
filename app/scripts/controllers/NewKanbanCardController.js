@@ -1,6 +1,6 @@
 'use strict';
 
-var NewKanbanCardController = function ($scope, kanbanManipulator, pollingService) {
+var NewKanbanCardController = function ($scope, kanbanManipulator, pollingService, kanbanRepository) {
 	$scope.master = {title: '', details: '', cardColor: $scope.colorOptions[0]};
 	$scope.newCard = {};
 
@@ -17,7 +17,7 @@ var NewKanbanCardController = function ($scope, kanbanManipulator, pollingServic
 		if (!this.newCardForm.$valid){
 			return false;
 		}
-		kanbanManipulator.addCardToColumn($scope.kanban, $scope.column, newCard.title, newCard.details, newCard.cardColor, newCard.owner);
+		kanbanManipulator.addCardToColumn(kanbanRepository.generateUUID(), $scope.kanban, $scope.column, newCard.title, newCard.details, newCard.cardColor, newCard.owner);
 		$scope.newCard = angular.copy($scope.master);
 
 		

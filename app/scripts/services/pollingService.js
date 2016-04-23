@@ -16,7 +16,7 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
           poll:  poll = function() {
              $timeout(function() {
                  poll();
-             }, 1000);
+             }, 3000);
 
              kanbanRepository.restApiPoll().then(function(data){
                 previousPolledTimeStamp = polledTimeStamp;

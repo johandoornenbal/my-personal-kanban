@@ -8,6 +8,7 @@ var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator,
 		$scope.model.kanbanName = '';
 		$scope.model.numberOfColumns = 3;
 		$scope.model.useTemplate = '';
+		$scope.model.id = kanbanRepository.generateUUID();
 
 		$scope.showNewKanban = true;
 	});
@@ -26,7 +27,7 @@ var NewKanbanController = function ($scope, kanbanRepository, kanbanManipulator,
         	return false;
         }
 
-		var newKanban = new Kanban($scope.model.kanbanName, $scope.model.numberOfColumns);
+		var newKanban = new Kanban($scope.model.id, $scope.model.kanbanName, $scope.model.numberOfColumns);
 
 		if ($scope.model.useTemplate != ''){
 			var templateKanban = kanbanRepository.all()[$scope.model.useTemplate];
