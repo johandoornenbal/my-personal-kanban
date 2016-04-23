@@ -18,7 +18,7 @@ class KanbanAPI {
         $this->db->close();
     }
 
-    function store($json, $timestamp, $servertimestamp) {
+    function store($json, $timestamp, $servertimestamp, $kanbans) {
         if ($json == ''){
             sendResponse(400, 'No valid Json received and stored');
             return false;
@@ -27,7 +27,8 @@ class KanbanAPI {
         $data = Array (
             'json' => $json,
             'timestamp' => $timestamp,
-            'servertimestamp' => $servertimestamp
+            'servertimestamp' => $servertimestamp,
+            'kanbans' => $kanbans
         );
         $this->db->where ('id', 1);
         if ($this->db->update ('kanban', $data))
@@ -83,6 +84,11 @@ if (($stream = fopen('php://input', "r")) !== FALSE)
 // Only decode for timestamp
 $json = json_decode($content, false);
 $timestamp = $json->timestamp;
+$kanbansByUUID = array();
+foreach ($json->kanbans as $kanban){
+    $kanbansByUUID[] = $kanban->id;
+}
+$serializedKanbansByUUID = serialize($kanbansByUUID);
 $serverTime = intval(microtime(true)*1000);
 
 // db connection
@@ -115,7 +121,7 @@ switch ($method) {
         break;
         
     case "POST":
-        $api->store($content, $timestamp, $serverTime);
+        $api->store($content, $timestamp, $serverTime, $serializedKanbansByUUID);
         break;
         
     default:

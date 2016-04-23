@@ -3,12 +3,14 @@
 angular.module('mpk').factory('kanbanRepository', function (cloudService, cryptoService, $http, $q) {
   return {
     kanbansByName : {},
+    kanbansById : {},
     lastUsed : '',
     theme: 'default-dark',
     lastUpdated: 0,
     
     add: function(kanban){
       this.kanbansByName[kanban.name] = kanban;
+      this.kanbansById[kanban.id] = kanban;
       this.save();
       return kanban;
     },
@@ -17,20 +19,27 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
       return this.kanbansByName;
     },
 
-    get: function(kanbanName){
+    getByName: function(kanbanName){
       return this.kanbansByName[kanbanName];
     },
 
-    remove: function(kanbanName) {
+    getById: function(id){
+        return this.kanbansById[id];
+    },
+
+    remove: function(kanbanName, id) {
       if (this.kanbansByName[kanbanName]){
         delete this.kanbansByName[kanbanName];
+      }
+      if (this.kanbansById[id]){
+        delete this.kanbansById[id];
       }
       return this.kanbansByName;
     },
 
     prepareSerializedKanbans: function(){
       var timestamp = new Date().getTime();
-      var toBeSerialized = {kanbans: this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
+      var toBeSerialized = {kanbans: this.kanbansByName, kanbansById: this.kanbansById, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
       return angular.toJson(toBeSerialized, false);
     },
 
