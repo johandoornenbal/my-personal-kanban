@@ -3,6 +3,7 @@
 angular.module('mpk').controller('ApplicationController', 
 	function ApplicationController($scope, $window, kanbanRepository, pollingService, themesProvider, $routeParams, $location, cloudService, $translate, $timeout) {
 
+    $scope.useLocalDb = false; /* set to true if not using RestApi of backend*/
 	$scope.colorOptions = ['FFFFFF','DBDBDB','FFB5B5', 'FF9E9E', 'FCC7FC', 'FC9AFB', 'CCD0FC', '989FFA', 'CFFAFC', '9EFAFF', '94D6FF','C1F7C2', 'A2FCA3', 'FAFCD2', 'FAFFA1', 'FCE4D4', 'FCC19D'];
 
 	// <-------- Polling backend for changes ---------------> //
@@ -225,16 +226,12 @@ angular.module('mpk').controller('ApplicationController',
 
 	var currentKanban = new Kanban('Kanban name', 0);
 
-	//  using local repo
-    //	var loadedRepo = kanbanRepository.load();
+    var loadedRepo;
 
-    // using db repo
-    var loadedRepo = kanbanRepository.restApiLoad().then(function(data){
+	if ($scope.useLocalDb) {
 
-        kanbanRepository.kanbansByName = data.kanbans;
-        kanbanRepository.lastUsed = data.lastUsed;
-        kanbanRepository.theme = data.theme;
-        kanbanRepository.lastUpdated = data.lastUpdated;
+	    //  using local repo
+    	loadedRepo = kanbanRepository.load();
 
         if (loadedRepo){
             if ($routeParams.kanbanName != undefined && kanbanRepository.get($routeParams.kanbanName)) {
@@ -270,11 +267,59 @@ angular.module('mpk').controller('ApplicationController',
             themesProvider.setCurrentTheme(kanbanRepository.getTheme());
         }
 
-        $timeout(function() {
-            pollingService.poll();
-        }, 1000);
+    } else {
 
-	});
+    // using db repo
+            loadedRepo = kanbanRepository.restApiLoad().then(function(data){
+
+            kanbanRepository.kanbansByName = data.kanbans;
+            kanbanRepository.lastUsed = data.lastUsed;
+            kanbanRepository.theme = data.theme;
+            kanbanRepository.lastUpdated = data.lastUpdated;
+
+            if (loadedRepo){
+                if ($routeParams.kanbanName != undefined && kanbanRepository.get($routeParams.kanbanName)) {
+                    currentKanban = kanbanRepository.get($routeParams.kanbanName);
+                } else if (kanbanRepository.getLastUsed() != undefined	) {
+                    currentKanban = kanbanRepository.getLastUsed();
+                    $location.path('/kanban/' + currentKanban.name);
+                }
+            }
+
+            $scope.kanban = currentKanban;
+            $scope.allKanbans = Object.keys(kanbanRepository.all());
+            $scope.selectedToOpen = $scope.newName = currentKanban.name;
+
+            $scope.switchToList = $scope.allKanbans.slice(0);
+            $translate("SWITCH_TO").then(function successFn(translation) {
+                $scope.switchToList.splice(0, 0, translation);
+                $scope.switchTo = translation;
+            });
+
+            $scope.$watch('kanban', function(){
+                kanbanRepository.save();
+            }, true);
+
+            $scope.columnHeight = angular.element($window).height() - 110;
+            $scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
+
+            $scope.triggerOpen = function(){
+                $scope.$broadcast('TriggerOpenKanban');
+            };
+
+            if (kanbanRepository.getTheme() != undefined && kanbanRepository.getTheme() != ''){
+                themesProvider.setCurrentTheme(kanbanRepository.getTheme());
+            }
+
+            $timeout(function() {
+                pollingService.poll();
+            }, 1000);
+
+    	});
+
+    };
+
+
 
 	var reload = function(data){
 
@@ -282,15 +327,6 @@ angular.module('mpk').controller('ApplicationController',
         kanbanRepository.lastUsed = data.lastUsed;
         kanbanRepository.theme = data.theme;
         kanbanRepository.lastUpdated = data.lastUpdated;
-
-        if (loadedRepo){
-            if ($routeParams.kanbanName != undefined && kanbanRepository.get($routeParams.kanbanName)) {
-                currentKanban = kanbanRepository.get($routeParams.kanbanName);
-            } else if (kanbanRepository.getLastUsed() != undefined	) {
-                currentKanban = kanbanRepository.getLastUsed();
-                $location.path('/kanban/' + currentKanban.name);
-            }
-        }
 
         currentKanban = kanbanRepository.get($routeParams.kanbanName);
         $scope.kanban = currentKanban;

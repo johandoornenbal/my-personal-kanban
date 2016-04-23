@@ -93,7 +93,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
     },
 
     restApiPoll : function() {
-//          console.log("Polling backend");
+          // console.log("Polling backend");
           var defer = $q.defer();
           $http({
                   method: 'GET',
