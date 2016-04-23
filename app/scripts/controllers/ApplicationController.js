@@ -15,7 +15,7 @@ angular.module('mpk').controller('ApplicationController',
                     pollingService.setNoChange();
                 });
             }
-            console.log('checking pollingService change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
+            console.log('checking pollingService connectionLost=' + pollingService.getConnectionLost() + ' change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
             poll();
         }, 3000);
     };
