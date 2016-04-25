@@ -50,8 +50,8 @@
                                 <li><a title="Select Theme for the Kanban board" ng-click="kanbanMenu.openSwitchTheme()"><i class="glyphicon glyphicon-picture"></i> {{ 'THEMES' | translate }}</a></li>
                                 <li><a title="Open archive" ng-click="kanbanMenu.openArchive(kanban)"><i class="glyphicon glyphicon-folder-open"></i> {{ 'ARCHIVES' | translate }}</a></li>
                                 <li><a title="Open archive" ng-click="kanbanMenu.openUsers(kanban)"><i class="glyphicon glyphicon-user"></i> {{ 'USERS' | translate }}</a></li>
-                                <!--<li role="presentation" class="divider"></li>-->
-                                <!--<li><a title="Help" ng-click="showHelp=true" href=""><i class="glyphicon glyphicon-question-sign"></i> Help</a></li>-->
+                                <li role="presentation" class="divider"></li>
+                                <li><a title="Help" ng-click="showHelp=true" href=""><i class="glyphicon glyphicon-question-sign"></i> {{ 'HELP' | translate }}</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -274,26 +274,37 @@
     </div>
 
     <!-- THIS IS THE HELP -->
-    <mpk-modal title="Help" visible="showHelp" modal-style="width:90%">
-        <p><span class="version">My Personal Kanban Version: @version@</span> from <a href="http://greggigon.github.io/my-personal-kanban/" target="blank">http://greggigon.github.io/my-personal-kanban/</a></p>
+    <mpk-modal title="{{ 'HELP' | translate }}" visible="showHelp" modal-style="width:90%">
+        <p><span class="version">My Team Kanban Version: @version@</span> <a href="http://github.com/johandoornenbal/my-team-kanban" target="blank">http://github.com/johandoornenbal/my-team-kanban</a><br/>
+            <small>forked from 'My Personal Kanban' by Greg Gigon<a href="http://greggigon.github.io/my-personal-kanban/" target="blank">http://greggigon.github.io/my-personal-kanban/</a></small>
+        </p>
         <p>
-            <strong>Personal Kanban</strong><br/>
-            <small>You can create <strong>new Kanban</strong> by selecting <strong>Kanban -> New</strong> from the Kanban menu. You can give it a name and select number of columns. You can also choose existing Kanban as a template for the new one.<br/>
-                Once Kanban is created you can <strong>rename</strong> it by <strong>clicking it's title</strong> in the top bar. You can add new cards to the columns by pressing <strong>&plus;</strong> in the top right of the column. <br/>
-                You can give each <strong>column name</strong> and change it's colour by selecting <strong>Column settings icon</strong> next to it's name. <strong>(Number)</strong> next to column name indicates number of cards in the column.<br/><br/>
-                <strong>Cards are created</strong> with <strong>title</strong> and possible longer <strong>description</strong>. You can also <strong>select different colour</strong> for the card if you would like to categorize them somehow. Description will <strong>keep the new line
-                    formating</strong> and add <strong>clickable links</strong> if you include any. <br/>
-                You can <strong>open Card details</strong> by clicking on <strong>card title</strong>.You can <strong>edit Card details</strong> once opened.<br/>
-                You can <strong>drag card between columns</strong> and move them <strong>up and down</strong> column list.<br/><br/>
-                You can have <strong>multiple Kanbans</strong> and open/switch them from the <strong>Switch to ...</strong> dropdown, next to <strong>Cloud Menu</strong>. <br/>
-                You can <strong>select different style</strong> of Kanban board from <strong>Kanban -> Theme</strong> menu.<br/>
-                You can <strong>delete</strong> entire Kanban by selecting <strong>Kanban -> Delete</strong> from the menu.<br/>
-                Your Kanbans are automatically <strong>saved</strong> in your <strong>browser storage</strong>. <br/><br/>
-                If card is in the last colum you can Archive it. It will remove it from a Column but keep in Kanban. You can review
-                your archived Cards via <strong>Kanban -> Archives</strong> menu. <br/>
-                You can also un-archive cards from Archive and permamently remove them.<br/><br/>
-                You can <strong>Export</strong> one or all Kanbans by selecting <strong>Kanban -> Export</strong> menu.<br/>
-                You can <strong>Import</strong> Kanban(s) from a JSON file. <strong>Not that Kanban with existing name, same as imported one will be replaced with the content of the new one.</strong><br/><br/>
+            <strong>{{'TEAM_KANBAN' | translate}}</strong><br/>
+            <small>
+                <strong>{{'CARDS' | translate}}</strong><br/>
+                <strong>Kaarten maken</strong><br/>
+                Je kunt een nieuwe kaart aan een kolom toevoegen door op de + te klikken rechtsboven in de kolom.<br/>
+                Kaarten worden gemaakt met een titel, optioneel een langere beschrijving en optioneel een kaart eigenaar.<br/>
+                Ook kun je kaarten een kleur geven om ze te categoriseren als dat gewenst is.<br/>
+                Wanneer je een link naar een website in de omschrijving zet wordt deze vanzelf 'aanklikbaar' gemaakt.<br/><br/>
+                <strong>Kaarten bewerken</strong><br/>
+                Je kunt een kaart openen door op de titel te klikken. Daarna kun je de kaart bewerken.<br/>
+                Vergeet niet het vinkje te klikken na de bewerking om de wijzigingen goed door te voeren.<br/><br/>
+                <strong>Kaarten verwijderen</strong> doe je door de <strong>X</strong> rechtsboven op de kaart te klikken<br/><br/>
+                <strong>Direct een eigenaar toekennen</strong> doe je door de <i class="glyphicon glyphicon-user"></i> te klikken<br/>
+                Voorwaarde is wel dat er minimaal een gebruiker is aangemaakt voor de Kanban<br/><br/>
+                <strong>Kaarten verplaatsen</strong> doe je door ze te verslepen binnen of tussen de kolommen<br/><br/>
+                <strong>Archiveren</strong><br/>
+                Alleen in de laatste kolom kun je een kaart archiveren door <i class="glyphicon glyphicon-folder-close"></i> te klikken.<br/>
+                Het archief kun je bekijken door in het menu 'Kanban' archief te kiezen. Kaarten kunnen van daaruit worden teruggezet op het bord.<br/>
+                <br/><strong>{{'COLUMNS' | translate}}</strong><br/>
+                <strong>Bewerken, toevoegen en verwijderen</strong><br/>
+                Klik op de <i class="glyphicon glyphicon-wrench"></i> om een kolom te bewerken. De titel, kleur en het maximaal aantal kaarten kun je aanpassen.<br/>
+                Weer voorzichtig met het <strong>verwijderen</strong> van een kolom: alle kaarten in de kolom gaan dan ook verloren. Daarom krijg je even bedenktijd voordat je kunt bevestigen.<br/>
+                Een nieuwe kolom kun je links of rechts <strong>toevoegen</strong> indien gewenst.<br/>
+                <br/><strong>Nieuwe gebruikers kun je toevoegen en verwijderen vanuit het Kanban menu 'Gebruikers'</strong><br/>
+                Geef iedere gebruiker initialen en een kleur voor de herkenbaarheid op de kaart - de kaart eigenaar is dan duidelijk voor iedereen.
+
             </small>
         </p>
     </mpk-modal>

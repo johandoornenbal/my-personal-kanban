@@ -66,5 +66,9 @@
     "INITALS" : "Initialen",
     "COLOR" : "Kleur",
     "USER_KANBAN_LINK" : "Link naar het gebruikers kanban bord",
-    "NEW_COLUMN" : "Nieuwe kolom"
+    "NEW_COLUMN" : "Nieuwe kolom",
+    "TEAM_KANBAN" : "My Team Kanban",
+    "CARDS" : "KAARTEN",
+    "COLUMNS" : "KOLOMMEN",
+    "HELP" : "Hulp"
 }

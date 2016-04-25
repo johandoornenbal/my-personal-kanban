@@ -66,6 +66,10 @@
     "INITALS" : "Initals",
     "COLOR" : "Color",
     "USER_KANBAN_LINK" : "Link to user kanban board",
-    "NEW_COLUMN" : "New column"
+    "NEW_COLUMN" : "New column",
+    "TEAM_KANBAN" : "My Team Kanban",
+    "CARDS" : "CARDS",
+    "COLUMNS" : "COLUMNS",
+    "HELP" : "Help"
 
 }
