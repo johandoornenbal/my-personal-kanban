@@ -9,6 +9,7 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
       // this var can be set in order to give a controller using the service a clue that
       // possible changes from backend could conflict with the editing (possibly) going on
       var selfChangeInProgress = false;
+      var polledTimeStampChange;
       //TODO: implement check that backend connection is responding OK
       var connectionLost = false;
 
@@ -25,6 +26,7 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
 //                console.log(polledTimeStamp);
                 if (polledTimeStamp > previousPolledTimeStamp){
                     change = true;
+                    polledTimeStampChange = polledTimeStamp;
                 }
              });
           },
@@ -32,7 +34,8 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
           getChange : function(){ return change;},
           setNoChange : function(){ change = false; },
           getSelfChangeInProgress : function(){ return selfChangeInProgress; },
-          setSelfChangeInProgress : function(changing){selfChangeInProgress = changing; }
+          setSelfChangeInProgress : function(changing){selfChangeInProgress = changing; },
+          getPolledTimeStampChange : function(){ return polledTimeStampChange; }
       };
 
 });

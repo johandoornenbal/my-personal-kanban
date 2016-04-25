@@ -8,7 +8,12 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 	// <-------- Polling backend for changes ---------------> //
     var poll = function() {
         $timeout(function() {
-            if (pollingService.getChange() && pollingService.getSelfChangeInProgress() !== true) {
+            if (
+                pollingService.getChange()
+                && pollingService.getSelfChangeInProgress() !== true
+                && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave
+            ) {
+                console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
                 kanbanRepository.singleRestApiLoad($routeParams.kanbanId).then(function(data){
                     reload(data);
                     pollingService.setNoChange();
@@ -74,6 +79,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
         $scope.$watch('kanban', function(){
             kanbanRepository.saveSingle();
+            $scope.timeStampLastSave = new Date().getTime();
         }, true);
 
         $scope.columnHeight = angular.element($window).height() - 110;
