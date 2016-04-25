@@ -78,6 +78,17 @@ class KanbanAPI {
                 
         return true;
     }
+    
+    function deleteNotInArray($allKanbanIds){
+        $allKanbans = $this->db->get ("kanban");
+        foreach($allKanbans as $storedKanban){
+            if(!in_array($storedKanban["id"], $allKanbanIds )) {
+                $this->db->where('id', $storedKanban["id"]);
+                $this->db->delete('kanban');
+            }
+        }
+        return true;
+    }
 
     function loadAll() {
         $this->db->where ("id", 1);
@@ -174,6 +185,17 @@ switch ($method) {
             $json = json_encode($resultObj);
             $api->updateOrCreate($kanban->id, $json, $timestamp, $serverTime);
         }
+        // delete kanbans that are not present in array allKanbanIds
+        $allKanbanIds = array();
+        foreach($allKanbans as $kanban){
+            $resultObj->singlekanban = $kanban;
+            $allKanbanIds[] = $kanban->id;
+        }
+        // only delete if not the last one
+        if (count($allKanbanIds) > 0){
+            $api->deleteNotInArray($allKanbanIds);
+        }
+        
         break;
         
     default:
