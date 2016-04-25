@@ -55,7 +55,7 @@ class KanbanAPI {
         // add servertimestamp to result to send back as response
         $singleKanbanResult = (object) array_merge( (array)$singleKanbanResult, array( 'servertimestamp' => $result['servertimestamp'] ) );
         $jsonResult = json_encode($singleKanbanResult);
-        sendResponse(200, $jsonResult);
+        sendResponse(200, $jsonResult, 'application/json');
         return true;
     }
         
@@ -64,7 +64,7 @@ class KanbanAPI {
         $result = $this->db->getOne ("kanbanAll");
         $jsonObject = (object) array('servertimestamp' => $result['servertimestamp'] );
         $jsonResult = json_encode($jsonObject);
-        sendResponse(200, $jsonResult);
+        sendResponse(200, $jsonResult, 'application/json');
         return true;
     }
     
@@ -73,7 +73,7 @@ class KanbanAPI {
         $result = $this->db->getOne ("kanbanAll");
         $jsonObject = (object) array('usertimestamp' => $result['timestamp'] );
         $jsonResult = json_encode($jsonObject);
-        sendResponse(200, $jsonResult);
+        sendResponse(200, $jsonResult, 'application/json');
         return true;
     }
         

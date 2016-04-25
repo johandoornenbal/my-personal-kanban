@@ -56,7 +56,8 @@ function getStatusCodeMessage($status)
 // Helper method to send a HTTP response code/message
 function sendResponse($status = 200, $body = '', $content_type = 'text/html')
 {
-	$status_header = 'HTTP/1.1 ' . $status . ' ' . getStatusCodeMessage($status);
+	header("Access-Control-Allow-Origin: *");
+    $status_header = 'HTTP/1.1 ' . $status . ' ' . getStatusCodeMessage($status);
 	header($status_header);
 	header('Content-type: ' . $content_type);
 	echo $body;

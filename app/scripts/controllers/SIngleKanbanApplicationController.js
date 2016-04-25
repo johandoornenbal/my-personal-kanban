@@ -33,14 +33,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 		return Math.floor((100 / numberOfColumns) * 100) / 100;
 	}
 
-	function handleErrorUploadDownload(errorMessage){
-		$scope.infoMessage = '';
-		$scope.showInfo = true;
-		$scope.showError = true;
-		$scope.showSpinner = false;
-		$scope.errorMessage = errorMessage;
-	}
-
 	$scope.kanbanMenu = {};
 
 	$scope.kanbanMenu.openSwitchTheme = function(){

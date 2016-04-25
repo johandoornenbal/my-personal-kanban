@@ -93,7 +93,7 @@ class KanbanAPI {
         $kanbansResult = (object) array_merge((array)$kanbansResult, array( 'timestamp' => $allKanbanResult['timestamp'] ));
         $kanbansResult = (object) array_merge((array)$kanbansResult, array( 'servertimestamp' => $allKanbanResult['servertimestamp'] ));
         $jsonResult = json_encode($kanbansResult);
-        sendResponse(200, $jsonResult);
+        sendResponse(200, $jsonResult, 'application/json');
         return true;
     }
     
@@ -102,7 +102,7 @@ class KanbanAPI {
         $result = $this->db->getOne ("kanbanAll");
         $jsonObject = (object) array('servertimestamp' => $result['servertimestamp'] );
         $jsonResult = json_encode($jsonObject);
-        sendResponse(200, $jsonResult);
+        sendResponse(200, $jsonResult, 'application/json');
         return true;
     }
     
@@ -111,7 +111,7 @@ class KanbanAPI {
         $result = $this->db->getOne ("kanbanAll");
         $jsonObject = (object) array('usertimestamp' => $result['timestamp'] );
         $jsonResult = json_encode($jsonObject);
-        sendResponse(200, $jsonResult);
+        sendResponse(200, $jsonResult, 'application/json');
         return true;
     }
         
