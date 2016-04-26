@@ -12,7 +12,7 @@ angular.module('mpk').controller('ApplicationController',
             if (
                 pollingService.getChange()
                 && pollingService.getSelfChangeInProgress() !== true
-                && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave
+                && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave + 100 // allow 100 for back-end save
             ) {
                 kanbanRepository.restApiLoad().then(function(data){
                     reload(data);

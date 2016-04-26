@@ -11,7 +11,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             if (
                 pollingService.getChange()
                 && pollingService.getSelfChangeInProgress() !== true
-                && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave
+                && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave + 100 // allow 100 for back-end save
             ) {
                 console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
                 kanbanRepository.singleRestApiLoad($routeParams.kanbanId).then(function(data){
