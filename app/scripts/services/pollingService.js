@@ -4,6 +4,7 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
 
       var previousPolledTimeStamp;
       var polledTimeStamp;
+      var polledBrowser;
       var poll;
       var change = false;
       // this var can be set in order to give a controller using the service a clue that
@@ -22,9 +23,12 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
              kanbanRepository.restApiPoll().then(function(data){
                 previousPolledTimeStamp = polledTimeStamp;
                 polledTimeStamp = data.servertimestamp;
+                polledBrowser = data.browser;
 //                console.log(previousPolledTimeStamp);
 //                console.log(polledTimeStamp);
-                if (polledTimeStamp > previousPolledTimeStamp){
+//                console.log(polledBrowser);
+//                console.log(kanbanRepository.browser);
+                if (polledTimeStamp > previousPolledTimeStamp && polledBrowser != kanbanRepository.browser){
                     change = true;
                     polledTimeStampChange = polledTimeStamp;
                 }

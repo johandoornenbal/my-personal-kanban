@@ -18,7 +18,7 @@ class KanbanAPI {
         $this->db->close();
     }
 
-    function storeAll($json, $timestamp, $servertimestamp) {
+    function storeAll($json, $timestamp, $servertimestamp, $browser) {
         if ($json == ''){
             sendResponse(400, 'No valid Json received and stored');
             return false;
@@ -27,7 +27,8 @@ class KanbanAPI {
         $data = Array (
             'json' => $json,
             'timestamp' => $timestamp,
-            'servertimestamp' => $servertimestamp
+            'servertimestamp' => $servertimestamp,
+            'browser' => $browser
         );
         $this->db->where ('id', 1);
         if ($this->db->update ('kanbanAll', $data))
@@ -38,7 +39,7 @@ class KanbanAPI {
         return true;
     }
     
-    function updateOrCreate($id, $json, $timestamp, $servertimestamp) {
+    function updateOrCreate($id, $json, $timestamp, $servertimestamp, $browser) {
         if ($json == ''){
             sendResponse(400, 'No valid Json received and stored');
             return false;
@@ -50,7 +51,8 @@ class KanbanAPI {
             $data = Array (
             'json' => $json,
             'timestamp' => $timestamp,
-            'servertimestamp' => $servertimestamp
+            'servertimestamp' => $servertimestamp,
+            'browser' => $browser
             );
             $this->db->where ('id', $id);
             if ($this->db->update ('kanban', $data))
@@ -67,7 +69,8 @@ class KanbanAPI {
                 'id' => $id,
                 'json' => $json,
                 'timestamp' => $timestamp,
-                'servertimestamp' => $servertimestamp
+                'servertimestamp' => $servertimestamp,
+                'browser' => $browser
             );
             if ($this->db->insert ('kanban', $insertData)) {
                 sendResponse(200, 'Json stored ');
@@ -111,7 +114,10 @@ class KanbanAPI {
     function servertimelastsave() {
         $this->db->where ("id", 1);
         $result = $this->db->getOne ("kanbanAll");
-        $jsonObject = (object) array('servertimestamp' => $result['servertimestamp'] );
+        $jsonObject = (object) array(
+            'servertimestamp' => $result['servertimestamp'],
+            'browser' => $result['browser'],
+            );
         $jsonResult = json_encode($jsonObject);
         sendResponse(200, $jsonResult, 'application/json');
         return true;
@@ -120,7 +126,10 @@ class KanbanAPI {
     function usertimelastsave() {
         $this->db->where ("id", 1);
         $result = $this->db->getOne ("kanbanAll");
-        $jsonObject = (object) array('usertimestamp' => $result['timestamp'] );
+        $jsonObject = (object) array(
+            'usertimestamp' => $result['timestamp'],
+            'browser' => $result['browser'],
+            );
         $jsonResult = json_encode($jsonObject);
         sendResponse(200, $jsonResult, 'application/json');
         return true;
@@ -142,6 +151,7 @@ if (($stream = fopen('php://input', "r")) !== FALSE)
 // Only decode for timestamp
 $json = json_decode($content, false);
 $timestamp = $json->timestamp;
+$browser = $json->browser;
 $allKanbans = array();
 foreach ($json->kanbans as $kanban){
     $allKanbans[] = $kanban;
@@ -179,11 +189,11 @@ switch ($method) {
         break;
         
     case "POST":
-        $api->storeAll($content, $timestamp, $serverTime);
+        $api->storeAll($content, $timestamp, $serverTime, $browser);
         foreach($allKanbans as $kanban){
             $resultObj->singlekanban = $kanban;
             $json = json_encode($resultObj);
-            $api->updateOrCreate($kanban->id, $json, $timestamp, $serverTime);
+            $api->updateOrCreate($kanban->id, $json, $timestamp, $serverTime, $browser);
         }
         // delete kanbans that are not present in array allKanbanIds
         $allKanbanIds = array();

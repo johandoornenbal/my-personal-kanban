@@ -18,7 +18,7 @@ class KanbanAPI {
         $this->db->close();
     }
 
-    function store($kanbanId, $json, $timestamp, $servertimestamp) {
+    function store($kanbanId, $json, $timestamp, $servertimestamp, $browser) {
         if ($json == ''){
             sendResponse(400, 'No valid Json received and stored');
             return false;
@@ -27,7 +27,8 @@ class KanbanAPI {
         $data = Array (
             'json' => $json,
             'timestamp' => $timestamp,
-            'servertimestamp' => $servertimestamp
+            'servertimestamp' => $servertimestamp,
+            'browser' => $browser
         );
         $this->db->where ('id', $kanbanId);
         if ($this->db->update ('kanban', $data))
@@ -36,7 +37,9 @@ class KanbanAPI {
             sendResponse(400, 'ERROR: could not store Single json ');
 
         $dataAll = Array (
-            'servertimestamp' => $servertimestamp
+            'timestamp' => $timestamp,
+            'servertimestamp' => $servertimestamp,
+            'browser' => $browser
         );
         $this->db->where ('id', 1);
         if ($this->db->update ('kanbanAll', $data))
@@ -62,7 +65,10 @@ class KanbanAPI {
     function servertimelastsave() {
         $this->db->where ("id", 1);
         $result = $this->db->getOne ("kanbanAll");
-        $jsonObject = (object) array('servertimestamp' => $result['servertimestamp'] );
+        $jsonObject = (object) array(
+                'servertimestamp' => $result['servertimestamp'],
+                'browser' => $result['browser'],
+            );
         $jsonResult = json_encode($jsonObject);
         sendResponse(200, $jsonResult, 'application/json');
         return true;
@@ -71,7 +77,10 @@ class KanbanAPI {
     function usertimelastsave() {
         $this->db->where ("id", 1);
         $result = $this->db->getOne ("kanbanAll");
-        $jsonObject = (object) array('usertimestamp' => $result['timestamp'] );
+        $jsonObject = (object) array(
+                'usertimestamp' => $result['timestamp'],
+                'browser' => $result['browser'],
+            );
         $jsonResult = json_encode($jsonObject);
         sendResponse(200, $jsonResult, 'application/json');
         return true;
@@ -94,6 +103,7 @@ if (($stream = fopen('php://input', "r")) !== FALSE)
 $json = json_decode($content, false);
 $kanbanId = $json->singlekanban->id;
 $timestamp = $json->timestamp;
+$browser = $json->browser;
 $serverTime = intval(microtime(true)*1000);
 
 // db connection
@@ -126,7 +136,7 @@ switch ($method) {
         break;
         
     case "POST":
-        $api->store($kanbanId, $content, $timestamp, $serverTime);
+        $api->store($kanbanId, $content, $timestamp, $serverTime, $browser);
         break;
         
     default:

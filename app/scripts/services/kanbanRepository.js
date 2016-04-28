@@ -1,13 +1,16 @@
 'use strict';
 
-angular.module('mpk').factory('kanbanRepository', function (cloudService, cryptoService, $http, $q) {
+angular.module('mpk').factory('kanbanRepository', function (cloudService, cryptoService, $http, $q, uuidService) {
      var BACKEND_URI = 'http://localhost:8888/my-personal-kanban/backend/';
+     // set id for the browser session
+     var browser = uuidService.generateUUID();
 
   return {
     kanbansByName : {},
     lastUsed : '',
     theme: 'default-dark',
     lastUpdated: 0,
+    browser : browser,
     
     add: function(kanban){
       this.kanbansByName[kanban.name] = kanban;
@@ -36,13 +39,13 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
 
     prepareSerializedKanbans: function(){
       var timestamp = new Date().getTime();
-      var toBeSerialized = {kanbans: this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
+      var toBeSerialized = {kanbans: this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp, browser : browser};
       return angular.toJson(toBeSerialized, false);
     },
 
     prepareSingleSerializedKanban: function(){
       var timestamp = new Date().getTime();
-      var toBeSerialized = {singlekanban : this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp};
+      var toBeSerialized = {singlekanban : this.kanbansByName, lastUsed: this.lastUsed, theme: this.theme, lastUpdated: this.lastUpdated, timestamp : timestamp, browser : browser};
       return angular.toJson(toBeSerialized, false);
     },
 
