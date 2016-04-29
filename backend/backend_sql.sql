@@ -24,7 +24,8 @@ CREATE TABLE `kanban` (
   `id` varchar(256) NOT NULL DEFAULT '0',
   `json` longtext NOT NULL,
   `timestamp` bigint(20) NOT NULL,
-  `servertimestamp` bigint(20) NOT NULL
+  `servertimestamp` bigint(20) NOT NULL,
+  `browser` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -32,7 +33,7 @@ CREATE TABLE `kanban` (
 --
 
 INSERT INTO `kanban` (`id`, `json`, `timestamp`, `servertimestamp`) VALUES
-('36434cac-012a-4147-a0ca-c8f03c683e2b', '{"singlekanban":{"id":"36434cac-012a-4147-a0ca-c8f03c683e2b","name":"seed","numberOfColumns":2,"columns":[{"name":"Kolom 1","cards":[]},{"name":"Kolom 2","cards":[]}],"archived":[],"users":[],"settings":{}}}', 1461509302068, 1461509302100);
+('36434cac-012a-4147-a0ca-c8f03c683e2b', '{"singlekanban":{"id":"36434cac-012a-4147-a0ca-c8f03c683e2b","name":"seed","numberOfColumns":2,"columns":[{"name":"Kolom 1","cards":[]},{"name":"Kolom 2","cards":[]}],"archived":[],"users":[],"settings":{}}}', 1461509302068, 1461509302100, '081a3172-dcbf-4fe8-b2c7-b7124bc79a16');
 
 -- --------------------------------------------------------
 
@@ -44,7 +45,8 @@ CREATE TABLE `kanbanAll` (
 `id` int(11) NOT NULL,
   `json` longtext NOT NULL,
   `timestamp` bigint(20) NOT NULL,
-  `servertimestamp` bigint(20) NOT NULL
+  `servertimestamp` bigint(20) NOT NULL,
+  `browser` varchar(256) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
