@@ -4,6 +4,8 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 	function ApplicationController($scope, $window, kanbanRepository, pollingService, themesProvider, $routeParams, $location, cloudService, $translate, $timeout) {
 
 	$scope.colorOptions = ['FFFFFF','DBDBDB','FFB5B5', 'FF9E9E', 'FCC7FC', 'FC9AFB', 'CCD0FC', '989FFA', 'CFFAFC', '9EFAFF', '94D6FF','C1F7C2', 'A2FCA3', 'FAFCD2', 'FAFFA1', 'FCE4D4', 'FCC19D'];
+    $scope.reloading = false; /* flag to indicate that changes to scope are due to reloading after loading data from backend */
+    $scope.reloadNoSave = false; /* flag set by pol() and unset by $scope.$watch to indicate that changes to scope are due to reloading and are not to be saved */
 
 	// <-------- Polling backend for changes ---------------> //
     var poll = function() {
@@ -15,13 +17,15 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             ) {
                 console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
                 kanbanRepository.singleRestApiLoad($routeParams.kanbanId).then(function(data){
+                    $scope.reloading = true;
+                    $scope.reloadNoSave = true;
                     reload(data);
                     pollingService.setNoChange();
                 });
             }
             console.log('checking pollingService connectionLost=' + pollingService.getConnectionLost() + ' change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
             poll();
-        }, 500);
+        }, 200);
     };
     poll();
 
@@ -69,11 +73,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
         $scope.kanban = kanbanRepository.getSingle();
 
-        $scope.$watch('kanban', function(){
-            kanbanRepository.saveSingle();
-            $scope.timeStampLastSave = new Date().getTime();
-        }, true);
-
         $scope.columnHeight = angular.element($window).height() - 110;
         $scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 
@@ -88,6 +87,18 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         $timeout(function() {
             pollingService.poll();
         }, 1000);
+
+        $scope.$watch('kanban', function(){
+            if (!$scope.reloading){
+                if ($scope.reloadNoSave) {
+                    // skip this save
+                    $scope.reloadNoSave = false;
+                } else {
+                    kanbanRepository.saveSingle();
+                    $scope.timeStampLastSave = new Date().getTime();
+                }
+            }
+        }, true);
 
     });
 
@@ -106,6 +117,8 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         if (kanbanRepository.getTheme() != undefined && kanbanRepository.getTheme() != ''){
             themesProvider.setCurrentTheme(kanbanRepository.getTheme());
         }
+
+        $scope.reloading = false;
 
     };
 

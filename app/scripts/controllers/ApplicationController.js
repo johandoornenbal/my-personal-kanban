@@ -5,6 +5,8 @@ angular.module('mpk').controller('ApplicationController',
 
     $scope.useLocalDb = false; /* set to true if not using RestApi of backend*/
 	$scope.colorOptions = ['FFFFFF','DBDBDB','FFB5B5', 'FF9E9E', 'FCC7FC', 'FC9AFB', 'CCD0FC', '989FFA', 'CFFAFC', '9EFAFF', '94D6FF','C1F7C2', 'A2FCA3', 'FAFCD2', 'FAFFA1', 'FCE4D4', 'FCC19D'];
+    $scope.reloading = false; /* flag set by poll() and unset by reload() to indicate that changes to scope are due to reloading after loading data from backend */
+    $scope.reloadNoSave = false; /* flag set by pol() and unset by $scope.$watch to indicate that changes to scope are due to reloading and are not to be saved */
 
 	// <-------- Polling backend for changes ---------------> //
     var poll = function() {
@@ -15,13 +17,15 @@ angular.module('mpk').controller('ApplicationController',
                 && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave + 100 // allow 100 for back-end save
             ) {
                 kanbanRepository.restApiLoad().then(function(data){
+                    $scope.reloading = true;
+                    $scope.reloadNoSave = true;
                     reload(data);
                     pollingService.setNoChange();
                 });
             }
             console.log('checking pollingService connectionLost=' + pollingService.getConnectionLost() + ' change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
             poll();
-        }, 500);
+        }, 200);
     };
     poll();
 
@@ -256,11 +260,6 @@ angular.module('mpk').controller('ApplicationController',
             $scope.switchTo = translation;
         });
 
-        $scope.$watch('kanban', function(){
-            kanbanRepository.save();
-            $scope.timeStampLastSave = new Date().getTime();
-        }, true);
-
         $scope.columnHeight = angular.element($window).height() - 110;
         $scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 
@@ -271,6 +270,18 @@ angular.module('mpk').controller('ApplicationController',
         if (kanbanRepository.getTheme() != undefined && kanbanRepository.getTheme() != ''){
             themesProvider.setCurrentTheme(kanbanRepository.getTheme());
         }
+
+        $scope.$watch('kanban', function(){
+            if (!$scope.reloading){
+                if ($scope.reloadNoSave) {
+                    // skip this save
+                    $scope.reloadNoSave = false;
+                } else {
+                    kanbanRepository.save();
+                    $scope.timeStampLastSave = new Date().getTime();
+                }
+            }
+        }, true);
 
     } else {
 
@@ -301,11 +312,6 @@ angular.module('mpk').controller('ApplicationController',
                 $scope.switchTo = translation;
             });
 
-            $scope.$watch('kanban', function(){
-                kanbanRepository.save();
-                $scope.timeStampLastSave = new Date().getTime();
-            }, true);
-
             $scope.columnHeight = angular.element($window).height() - 110;
             $scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 
@@ -320,6 +326,18 @@ angular.module('mpk').controller('ApplicationController',
             $timeout(function() {
                 pollingService.poll();
             }, 1000);
+
+            $scope.$watch('kanban', function(){
+                if (!$scope.reloading){
+                    if ($scope.reloadNoSave) {
+                        // skip this save
+                        $scope.reloadNoSave = false;
+                    } else {
+                        kanbanRepository.save();
+                        $scope.timeStampLastSave = new Date().getTime();
+                    }
+                }
+            }, true);
 
     	});
 
@@ -351,6 +369,8 @@ angular.module('mpk').controller('ApplicationController',
         if (kanbanRepository.getTheme() != undefined && kanbanRepository.getTheme() != ''){
             themesProvider.setCurrentTheme(kanbanRepository.getTheme());
         }
+
+        $scope.reloading = false;
 
     };
 

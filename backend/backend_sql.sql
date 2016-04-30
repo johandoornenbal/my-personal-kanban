@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost:8889
--- Generation Time: Apr 25, 2016 at 07:07 AM
+-- Generation Time: Apr 30, 2016 at 08:25 AM
 -- Server version: 5.5.38
 -- PHP Version: 5.6.2
 
@@ -32,8 +32,8 @@ CREATE TABLE `kanban` (
 -- Dumping data for table `kanban`
 --
 
-INSERT INTO `kanban` (`id`, `json`, `timestamp`, `servertimestamp`) VALUES
-('36434cac-012a-4147-a0ca-c8f03c683e2b', '{"singlekanban":{"id":"36434cac-012a-4147-a0ca-c8f03c683e2b","name":"seed","numberOfColumns":2,"columns":[{"name":"Kolom 1","cards":[]},{"name":"Kolom 2","cards":[]}],"archived":[],"users":[],"settings":{}}}', 1461509302068, 1461509302100, '081a3172-dcbf-4fe8-b2c7-b7124bc79a16');
+INSERT INTO `kanban` (`id`, `json`, `timestamp`, `servertimestamp`, `browser`) VALUES
+('36434cac-012a-4147-a0ca-c8f03c683e2b', '{"singlekanban":{"id":"36434cac-012a-4147-a0ca-c8f03c683e2b","name":"seed","numberOfColumns":2,"columns":[{"name":"Kolom 1","cards":[]},{"name":"Kolom 2","cards":[{"id":"90bec626-5b8f-428a-a24a-ff64146d4cc2","name":"123","details":"","color":"FFFFFF"},{"id":"8279ba55-824e-4e15-b830-3606e1a900b8","name":"Nog een test","details":"","color":"FFFFFF"},{"id":"b9e9f192-e9b2-41c9-85e5-0c4a27430da0","name":"Een test","details":"","color":"FFFFFF"}]}],"archived":[],"users":[],"settings":{}},"lastUsed":"","timestamp":1461875434904,"browser":"081a3172-dcbf-4fe8-b2c7-b7124bc79a16"}', 1461875434904, 1461875434928, '081a3172-dcbf-4fe8-b2c7-b7124bc79a16');
 
 -- --------------------------------------------------------
 
@@ -53,8 +53,8 @@ CREATE TABLE `kanbanAll` (
 -- Dumping data for table `kanbanAll`
 --
 
-INSERT INTO `kanbanAll` (`id`, `json`, `timestamp`, `servertimestamp`) VALUES
-(1, '{"kanbans":{},"timestamp":1461509302068}', 1461509302068, 1461509302100);
+INSERT INTO `kanbanAll` (`id`, `json`, `timestamp`, `servertimestamp`, `browser`) VALUES
+(1, '{"singlekanban":{"id":"36434cac-012a-4147-a0ca-c8f03c683e2b","name":"seed","numberOfColumns":2,"columns":[{"name":"Kolom 1","cards":[]},{"name":"Kolom 2","cards":[{"id":"90bec626-5b8f-428a-a24a-ff64146d4cc2","name":"123","details":"","color":"FFFFFF"},{"id":"8279ba55-824e-4e15-b830-3606e1a900b8","name":"Nog een test","details":"","color":"FFFFFF"},{"id":"b9e9f192-e9b2-41c9-85e5-0c4a27430da0","name":"Een test","details":"","color":"FFFFFF"}]}],"archived":[],"users":[],"settings":{}},"lastUsed":"","timestamp":1461875434904,"browser":"081a3172-dcbf-4fe8-b2c7-b7124bc79a16"}', 1461875434904, 1461875434928, '081a3172-dcbf-4fe8-b2c7-b7124bc79a16');
 
 --
 -- Indexes for dumped tables
