@@ -2,6 +2,7 @@
 
 angular.module('mpk').factory('pollingService', function(kanbanRepository, $timeout){
 
+      var myTimeStamp;
       var previousPolledTimeStamp;
       var polledTimeStamp;
       var polledBrowser;
@@ -11,14 +12,18 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
       // possible changes from backend could conflict with the editing (possibly) going on
       var selfChangeInProgress = false;
       var polledTimeStampChange;
-      //TODO: implement check that backend connection is responding OK
-      var connectionLost = false;
+      var pauze = false;
 
       return {
           poll:  poll = function() {
              $timeout(function() {
-                 poll();
-             }, 200);
+                if (!pauze){
+                    myTimeStamp = new Date().getTime();
+                    poll();
+                } else {
+                    console.log('pauzing polling ...');
+                }
+             }, 3000);
 
              kanbanRepository.restApiPoll().then(function(data){
                 previousPolledTimeStamp = polledTimeStamp;
@@ -28,18 +33,21 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
 //                console.log(polledTimeStamp);
 //                console.log(polledBrowser);
 //                console.log(kanbanRepository.browser);
+//                console.log(pauze);
                 if (polledTimeStamp > previousPolledTimeStamp && polledBrowser != kanbanRepository.browser){
                     change = true;
                     polledTimeStampChange = polledTimeStamp;
                 }
              });
           },
-          getConnectionLost: function(){ return connectionLost;},
           getChange : function(){ return change;},
           setNoChange : function(){ change = false; },
           getSelfChangeInProgress : function(){ return selfChangeInProgress; },
           setSelfChangeInProgress : function(changing){selfChangeInProgress = changing; },
-          getPolledTimeStampChange : function(){ return polledTimeStampChange; }
+          getPolledTimeStampChange : function(){ return polledTimeStampChange; },
+          setPauze : function(pauzing){pauze = pauzing;},
+          getPauze : function(){return pauze;},
+          getMyTimeStamp : function(){return myTimeStamp;}
       };
 
 });

@@ -11,19 +11,29 @@ angular.module('mpk').controller('ApplicationController',
 	// <-------- Polling backend for changes ---------------> //
     var poll = function() {
         $timeout(function() {
+            var time = new Date().getTime();
+            if (time > pollingService.getMyTimeStamp() + 10000){
+            	$translate("CONNECTION_LOST").then(function successFn(translation) {
+            		    $scope.errorMessage = translation;
+                        $scope.showError = true;
+                        $scope.showInfo = true;
+            	});
+            }
             if (
                 pollingService.getChange()
                 && pollingService.getSelfChangeInProgress() !== true
                 && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave + 100 // allow 100 for back-end save
             ) {
                 kanbanRepository.restApiLoad().then(function(data){
+                    pollingService.setPauze(true);
                     $scope.reloading = true;
                     $scope.reloadNoSave = true;
                     reload(data);
                     pollingService.setNoChange();
+                    pollingService.setPauze(false);
                 });
             }
-            console.log('checking pollingService connectionLost=' + pollingService.getConnectionLost() + ' change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
+//            console.log('change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
             poll();
         }, 200);
     };

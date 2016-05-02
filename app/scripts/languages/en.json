@@ -70,6 +70,7 @@
     "TEAM_KANBAN" : "My Team Kanban",
     "CARDS" : "CARDS",
     "COLUMNS" : "COLUMNS",
-    "HELP" : "Help"
+    "HELP" : "Help",
+    "CONNECTION_LOST" : "Connection lost; please reload"
 
 }

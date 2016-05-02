@@ -70,5 +70,6 @@
     "TEAM_KANBAN" : "My Team Kanban",
     "CARDS" : "KAARTEN",
     "COLUMNS" : "KOLOMMEN",
-    "HELP" : "Hulp"
+    "HELP" : "Hulp",
+    "CONNECTION_LOST" : "Connectie met server is verloren; browser graag opnieuw laden"
 }
