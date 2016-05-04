@@ -12,8 +12,17 @@ a { padding-left: 2px; padding-right: 2px;}
 body { background-color: #bbb; }
 
 #kanban { margin: 0px; padding: 0px 10px 0 10px;}
-#columns { margin: 55px 0px 0px 0px;}
-#columns > div { padding-left: 5px; padding-right:5px;}
+#column-container {
+    margin: 55px 0px 0px 0px;
+    position: relative;
+    float: left;
+}
+#columns > div {
+    padding-left: 5px; padding-right:5px;
+    float: left;
+    position: relative;
+}
+#columns a { color: #444; }
 
 .card {
     padding: 10px;
