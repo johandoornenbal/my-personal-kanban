@@ -27,12 +27,14 @@ function KanbanColumn(name, settings){
 	};
 }
 
-function KanbanCard(id, name, details, color, owner){
+function KanbanCard(id, name, details, color, owner, createdOn, lastChange){
     this.id = id;
 	this.name = name;
 	this.details = details;
 	this.color = color;
 	this.owner = owner;
+	this.createdOn = createdOn;
+	this.lastChange = lastChange;
 	return this;
 }
 

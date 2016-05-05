@@ -8,6 +8,8 @@ var NewKanbanCardController = function ($scope, kanbanManipulator, pollingServic
 		$scope.kanbanColumnName = column.name;
 		$scope.column = column;
 		$scope.newCard = angular.copy($scope.master);
+		$scope.newCard.createdOn = new Date().getTime();
+        $scope.newCard.lastChange = new Date().getTime();
 
 		$scope.showNewCard = true;
 	});
@@ -17,12 +19,14 @@ var NewKanbanCardController = function ($scope, kanbanManipulator, pollingServic
 		if (!this.newCardForm.$valid){
 			return false;
 		}
-		kanbanManipulator.addCardToColumn(uuidService.generateUUID(), $scope.kanban, $scope.column, newCard.title, newCard.details, newCard.cardColor, newCard.owner);
+
+		kanbanManipulator.addCardToColumn(uuidService.generateUUID(), $scope.kanban, $scope.column, newCard.title, newCard.details, newCard.cardColor, newCard.owner, newCard.createdOn, newCard.lastChange);
 		$scope.newCard = angular.copy($scope.master);
 
 		
 		$scope.showNewCard = false;
 		pollingService.setSelfChangeInProgress(false);
+		$scope.$emit("newCardAdded");
 
 		return true;
 	};
