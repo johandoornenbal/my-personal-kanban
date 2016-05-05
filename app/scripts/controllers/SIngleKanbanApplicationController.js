@@ -109,6 +109,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             themesProvider.setCurrentTheme(kanbanRepository.getTheme());
         }
 
+        // take 1 second in order to load from db and set up the listeners - then start polling and listening for changes
         $timeout(function() {
             pollingService.poll();
             $scope.cardWatchFirst = false;
@@ -174,9 +175,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         // detect change in a single card - register listeners (again)
         for ($i=0; $i<$scope.allCards.length; $i++){
             $scope.allCardListeners.push($scope.$watch('allCards[' + $i + ']', function(newValue, oldValue){
-                if ($scope.cardWatchFirst){
-//                    $scope.cardWatchFirst = false;
-                } else {
+                if (!$scope.cardWatchFirst){
                     console.log("change in card detected");
                     console.log(oldValue);
                     console.log(newValue);
@@ -190,8 +189,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             }, true));
 
         }
-
-
     };
 
     var detectChangesInColumns = function(){
@@ -206,9 +203,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
          // detect change in a single column - register listeners (again)
          for ($i=0; $i < $scope.kanban.columns.length; $i++){
              $scope.allColumnListeners.push($scope.$watch('kanban.columns['+ $i  + ']', function(newValue, oldValue){
-                if ($scope.columnWatchFirst){
-//                    $scope.columnWatchFirst = false;
-                } else {
+                if (!$scope.columnWatchFirst){
                     console.log("change in column detected");
                     console.log(oldValue);
                     console.log(newValue);
@@ -221,8 +216,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                 }
              }, true));
          }
-
-
     };
 
     var searchById = function search(idSearchFor, myArray){
@@ -235,12 +228,12 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     };
 
     var searchByName = function search(nameSearchFor, myArray){
-            for (var i=0; i < myArray.length; i++) {
-                if (myArray[i].name === nameSearchFor) {
-                    return i;
-                }
+        for (var i=0; i < myArray.length; i++) {
+            if (myArray[i].name === nameSearchFor) {
+                return i;
             }
-            return -1;
-        };
+        }
+        return -1;
+    };
 
 });

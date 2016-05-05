@@ -11,16 +11,18 @@ function Kanban(id, name, numberOfColumns) {
 	};
 }
 
-function KanbanColumn(name){
+function KanbanColumn(name, id){
 	return {
+	    id: id,
 		name: name,
 		cards: [],
 		settings: {}
 	};
 }
 
-function KanbanColumn(name, settings){
+function KanbanColumn(name, id, settings){
 	return {
+	    id: id,
 		name: name,
 		cards: [],
 		settings: settings

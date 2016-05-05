@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mpk').factory('kanbanManipulator', function () {
+angular.module('mpk').factory('kanbanManipulator', function (uuidService) {
   return {
     columnIndex: function(kanban, column){
       var theIndex;
@@ -11,7 +11,7 @@ angular.module('mpk').factory('kanbanManipulator', function () {
     },
 
     addColumn: function(kanban, columnName){
-      kanban.columns.push(new KanbanColumn(columnName));
+      kanban.columns.push(new KanbanColumn(columnName, uuidService.generateUUID()));
     },
 
     addCardToColumn: function(id, kanban, column, cardTitle, details, color, owner, createdOn, lastChange){
@@ -53,7 +53,7 @@ angular.module('mpk').factory('kanbanManipulator', function () {
     createNewFromTemplate: function(kanban, newId, newName){
       var newKanban = new Kanban(newId, newName, kanban.columns.length);
       angular.forEach(kanban.columns, function(col) {
-        newKanban.columns.push(new KanbanColumn(col.name, col.settings));
+        newKanban.columns.push(new KanbanColumn(col.name, uuidService.generateUUID(), col.settings));
       });
       return newKanban;
     },
@@ -68,9 +68,9 @@ angular.module('mpk').factory('kanbanManipulator', function () {
     addColumnNextToColumn: function(kanban, column, direction, label){
       var columnIndex = this.columnIndex(kanban, column);
       if (direction == 'left'){
-        kanban.columns.splice(columnIndex, 0, new KanbanColumn(label + ' '+ (kanban.numberOfColumns + 1)));
+        kanban.columns.splice(columnIndex, 0, new KanbanColumn(label + ' '+ (kanban.numberOfColumns + 1), uuidService.generateUUID()));
       } else {
-        kanban.columns.splice(columnIndex+1, 0, new KanbanColumn(label + ' '+ (kanban.numberOfColumns + 1)));
+        kanban.columns.splice(columnIndex+1, 0, new KanbanColumn(label + ' '+ (kanban.numberOfColumns + 1), uuidService.generateUUID()));
       }
       kanban.numberOfColumns++;
       return kanban;
