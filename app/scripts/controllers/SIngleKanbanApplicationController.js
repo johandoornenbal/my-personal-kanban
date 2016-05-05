@@ -49,6 +49,59 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     };
     poll();
 
+    var autosave = function(){
+        $timeout(function(){
+            console.log("start autosave");
+            $scope.$broadcast("saveColumnsAndCards");
+            autosave();
+        }, 1000);
+    }
+    autosave();
+
+    $scope.$on('saveColumnsAndCards', function(){
+        var i;
+        var cardToSave;
+        var columnToSave;
+
+        var allCardsToSave = $scope.allChangedCards.slice();
+        for (i=0; i < allCardsToSave.length; i++){
+            cardToSave = allCardsToSave[i];
+            //TODO: hook here
+            console.log("saving card " + cardToSave.name);
+            $scope.allChangedCards.splice(0,1);
+//            console.log($scope.allChangedCards);
+        }
+
+        var allColumnsToSave = $scope.allChangedColumns.slice();
+        for (i=0; i < allColumnsToSave.length; i++){
+            columnToSave = allColumnsToSave[i];
+            //TODO: hook here
+            console.log("saving column " + columnToSave.name);
+            $scope.allChangedColumns.splice(0,1);
+//            console.log($scope.allChangedColumns);
+        }
+
+        //TODO: temporary save all untill more refined api - then use hooks above
+        if (allCardsToSave.length > 0 || allColumnsToSave.length > 0){
+            tempSave();
+        }
+
+    });
+
+    // TODO: temporary until more refind API
+    var tempSave = function(){
+        if (!$scope.reloading){
+            if ($scope.reloadNoSave) {
+                // skip this save
+                $scope.reloadNoSave = false;
+            } else {
+                kanbanRepository.saveSingle();
+                $scope.timeStampLastSave = new Date().getTime();
+            }
+        }
+    };
+
+
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 		detectChangesInColumns();
@@ -116,17 +169,17 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             $scope.columnWatchFirst = false;
         }, 1000);
 
-        $scope.$watch('kanban', function(){
-            if (!$scope.reloading){
-                if ($scope.reloadNoSave) {
-                    // skip this save
-                    $scope.reloadNoSave = false;
-                } else {
-                    kanbanRepository.saveSingle();
-                    $scope.timeStampLastSave = new Date().getTime();
-                }
-            }
-        }, true);
+//        $scope.$watch('kanban', function(){
+//            if (!$scope.reloading){
+//                if ($scope.reloadNoSave) {
+//                    // skip this save
+//                    $scope.reloadNoSave = false;
+//                } else {
+//                    kanbanRepository.saveSingle();
+//                    $scope.timeStampLastSave = new Date().getTime();
+//                }
+//            }
+//        }, true);
 
         detectChangesInCards();
         detectChangesInColumns();
@@ -176,15 +229,15 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         for ($i=0; $i<$scope.allCards.length; $i++){
             $scope.allCardListeners.push($scope.$watch('allCards[' + $i + ']', function(newValue, oldValue){
                 if (!$scope.cardWatchFirst){
-                    console.log("change in card detected");
-                    console.log(oldValue);
-                    console.log(newValue);
+//                    console.log("change in card detected");
+//                    console.log(oldValue);
+//                    console.log(newValue);
                     if (searchById(newValue.id, $scope.allChangedCards)>=0){
                         $scope.allChangedCards.splice(searchById(newValue.id, $scope.allChangedCards), 1);
-                        console.log("card found");
+//                        console.log("card found");
                     }
                     $scope.allChangedCards.push(newValue);
-                    console.log($scope.allChangedCards);
+//                    console.log($scope.allChangedCards);
                 }
             }, true));
 
@@ -204,15 +257,15 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
          for ($i=0; $i < $scope.kanban.columns.length; $i++){
              $scope.allColumnListeners.push($scope.$watch('kanban.columns['+ $i  + ']', function(newValue, oldValue){
                 if (!$scope.columnWatchFirst){
-                    console.log("change in column detected");
-                    console.log(oldValue);
-                    console.log(newValue);
+//                    console.log("change in column detected");
+//                    console.log(oldValue);
+//                    console.log(newValue);
                     if (searchByName(newValue.name, $scope.allChangedColumns)>=0){
                         $scope.allChangedColumns.splice(searchByName(newValue.name, $scope.allChangedColumns), 1);
-                        console.log("column found");
+//                        console.log("column found");
                     }
                     $scope.allChangedColumns.push(newValue);
-                    console.log($scope.allChangedColumns);
+//                    console.log($scope.allChangedColumns);
                 }
              }, true));
          }
