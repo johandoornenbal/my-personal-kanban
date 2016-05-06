@@ -71,6 +71,7 @@
     "CARDS" : "CARDS",
     "COLUMNS" : "COLUMNS",
     "HELP" : "Help",
-    "CONNECTION_LOST" : "Connection lost; please reload"
+    "CONNECTION_LOST" : "Connection lost; please reload",
+    "CONNECTION_FOUND" : "Connection re-established"
 
 }

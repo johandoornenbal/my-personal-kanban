@@ -12,6 +12,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     $scope.allChangedColumns = [];
     $scope.cardWatchFirst = true;
     $scope.columnWatchFirst = true;
+    $scope.connectionLost = false;
 
 	$scope.colorOptions = ['FFFFFF','DBDBDB','FFB5B5', 'FF9E9E', 'FCC7FC', 'FC9AFB', 'CCD0FC', '989FFA', 'CFFAFC', '9EFAFF', '94D6FF','C1F7C2', 'A2FCA3', 'FAFCD2', 'FAFFA1', 'FCE4D4', 'FCC19D'];
     $scope.reloading = false; /* flag to indicate that changes to scope are due to reloading after loading data from backend */
@@ -22,11 +23,13 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         $timeout(function() {
             var time = new Date().getTime();
             if (time > pollingService.getMyTimeStamp() + 10000){
-            	$translate("CONNECTION_LOST").then(function successFn(translation) {
-            		    $scope.errorMessage = translation;
-                        $scope.showError = true;
-                        $scope.showInfo = true;
-            	});
+            	$scope.$broadcast("connectionLost");
+            	$scope.connectionLost = true;
+            } else {
+                if ($scope.connectionLost){
+                    $scope.$broadcast("connectionFound");
+                    $scope.connectionLost = false;
+                }
             }
             if (
                 pollingService.getChange()
@@ -101,6 +104,26 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         }
     };
 
+    $scope.$on('connectionLost', function(){
+        $translate("CONNECTION_LOST").then(function successFn(translation) {
+                $scope.errorMessage = translation;
+                $scope.infoMessage = '';
+                $scope.showError = true;
+                $scope.showInfo = true;
+        });
+    });
+
+    $scope.$on('connectionFound', function(){
+        $translate("CONNECTION_FOUND").then(function successFn(translation) {
+                $scope.infoMessage = translation;
+                $scope.errorMessage = '';
+                $scope.showInfo = true;
+                $scope.showError = false;
+                $timeout(function() {
+                    $scope.showInfo = false;
+                }, 10000);
+        });
+    });
 
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);

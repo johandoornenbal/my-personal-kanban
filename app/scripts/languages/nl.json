@@ -71,5 +71,6 @@
     "CARDS" : "KAARTEN",
     "COLUMNS" : "KOLOMMEN",
     "HELP" : "Hulp",
-    "CONNECTION_LOST" : "Connectie met server is verloren; browser graag opnieuw laden"
+    "CONNECTION_LOST" : "Connectie met server is verloren; browser graag opnieuw laden",
+    "CONNECTION_FOUND" : "Connectie met server is hersteld"
 }
