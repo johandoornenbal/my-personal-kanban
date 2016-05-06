@@ -150,8 +150,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             function(data){
                 console.log(data);
             });
-        //TODO: temporary save all untill more refined api - then use hooks above
-        tempSave();
     });
 
     // TODO: temporary until more refind API
