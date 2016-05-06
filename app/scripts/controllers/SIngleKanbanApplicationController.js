@@ -13,6 +13,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     $scope.cardWatchFirst = true;
     $scope.columnWatchFirst = true;
     $scope.connectionLost = false;
+    $scope.timeStampLastSave = new Date().getTime();
 
 	$scope.colorOptions = ['FFFFFF','DBDBDB','FFB5B5', 'FF9E9E', 'FCC7FC', 'FC9AFB', 'CCD0FC', '989FFA', 'CFFAFC', '9EFAFF', '94D6FF','C1F7C2', 'A2FCA3', 'FAFCD2', 'FAFFA1', 'FCE4D4', 'FCC19D'];
     $scope.reloading = false; /* flag to indicate that changes to scope are due to reloading after loading data from backend */
@@ -36,7 +37,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                 && pollingService.getSelfChangeInProgress() !== true
                 && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave + 100 // allow 100 for back-end save
             ) {
-//                console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
                 kanbanRepository.singleRestApiLoad($routeParams.kanbanId).then(function(data){
                     pollingService.setPauze(true);
                     $scope.reloading = true;
@@ -46,6 +46,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                     pollingService.setPauze(false);
                 });
             }
+//            console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
 //            console.log('change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
             poll();
         }, 200);
