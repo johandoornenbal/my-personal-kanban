@@ -372,7 +372,6 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
 
     setTheme: function(theme){
       this.theme = theme;
-      this.save();
       return this.theme;
     },
 
