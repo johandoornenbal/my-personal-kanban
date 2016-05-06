@@ -93,7 +93,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
     // TODO: temporary until more refind API
     var tempSave = function(){
-        if (!$scope.reloading){
+        if (!$scope.reloading && !$scope.connectionLost){
             if ($scope.reloadNoSave) {
                 // skip this save
                 $scope.reloadNoSave = false;
