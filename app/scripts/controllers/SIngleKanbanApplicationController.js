@@ -82,7 +82,10 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         for (i=0; i < allCardsToSave.length; i++){
             cardToSave = allCardsToSave[i];
             //TODO: hook here
-            console.log("saving card " + cardToSave.name);
+            kanbanRepository.saveCard(cardToSave).then(
+                function(data){
+                    console.log(data);
+                });
             $scope.allChangedCards.splice(0,1);
 //            console.log($scope.allChangedCards);
         }
@@ -91,7 +94,10 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         for (i=0; i < allColumnsToSave.length; i++){
             columnToSave = allColumnsToSave[i];
             //TODO: hook here
-            console.log("saving column " + columnToSave.name);
+            kanbanRepository.saveColumn(columnToSave).then(
+                function(data){
+                    console.log(data);
+                });
             $scope.allChangedColumns.splice(0,1);
 //            console.log($scope.allChangedColumns);
         }
@@ -105,26 +111,45 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
     $scope.$on('cardDeleted', function(e, cardId){
         //TODO: hook here
-        console.log("deleting card with id : " + cardId);
+        kanbanRepository.deleteCard(cardId).then(
+            function(data){
+                console.log(data);
+            });
         //TODO: temporary save all untill more refined api - then use hooks above
         tempSave();
     });
 
+    $scope.$on('ColumnDeleted', function(e, columnId){
+        //TODO: hook here
+        kanbanRepository.deleteColumn(columnId).then(
+            function(data){
+                console.log(data);
+            });
+    });
+
     $scope.$on('usersChanged', function(){
         //TODO: hook here
-        console.log("saving users");
+        kanbanRepository.saveUsers().then(
+            function(data){
+                console.log(data);
+            });
         //TODO: temporary save all untill more refined api - then use hooks above
         tempSave();
     });
 
     $scope.$on('archiveChanged', function(){
         //TODO: hook here
-        console.log("saving archive");
+        kanbanRepository.saveArchive().then(
+            function(data){
+                console.log(data);
+            });
     });
 
     $scope.$on('kanbanSettingsChanged', function(){
-        //TODO: hook here
-        console.log("saving kanban settings");
+        kanbanRepository.saveSettings().then(
+            function(data){
+                console.log(data);
+            });
         //TODO: temporary save all untill more refined api - then use hooks above
         tempSave();
     });

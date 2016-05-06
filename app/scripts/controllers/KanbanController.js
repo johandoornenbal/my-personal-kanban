@@ -104,6 +104,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	            $scope.$emit('cardDeleted', card.id);
 	    });
 		kanbanManipulator.removeColumn($scope.kanban, column);
+		$scope.$emit('ColumnDeleted', column.id);
 		$scope.$emit('ColumnsChanged');
 		pollingService.setSelfChangeInProgress(false);
 	});

@@ -186,6 +186,159 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           return defer.promise;
     },
 
+    saveCard : function(card) {
+          var payload = angular.toJson(card, false);
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: BACKEND_URI + 'api_v2.php/savecard',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    deleteCard : function(cardId) {
+          var payload = angular.toJson(cardId, false);
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: BACKEND_URI + 'api_v2.php/deletecard',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    saveColumn : function(column) {
+          var payload = angular.toJson(column, false);
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: BACKEND_URI + 'api_v2.php/savecolumn',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    deleteColumn : function(columnId) {
+          var payload = angular.toJson(columnId, false);
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: BACKEND_URI + 'api_v2.php/deletecolumn',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    saveUsers : function() {
+          var payload = angular.toJson("some users payload", false);
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: BACKEND_URI + 'api_v2.php/saveusers',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    saveArchive : function() {
+          var payload = angular.toJson("some archive payload", false);
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: BACKEND_URI + 'api_v2.php/savearchive',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
+
+    saveSettings : function() {
+          var payload = angular.toJson("some settings payload", false);
+          var defer = $q.defer();
+          $http({
+                  method: 'POST',
+                  url: BACKEND_URI + 'api_v2.php/savesettings',
+                  cache: false,
+                  dataType: "json",
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+                  },
+                  data: payload
+              })
+              .then(function successCallback(response){
+                    defer.resolve(response.data);
+              },
+              function errorCallback(response) {
+                    defer.resolve(response.data);
+              });
+          return defer.promise;
+    },
 
     load: function(){
       var saved = angular.fromJson(localStorage.getItem('myPersonalKanban'));
