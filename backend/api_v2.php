@@ -19,7 +19,75 @@ class KanbanAPI {
     }
 
     function savecard($json){
-        sendResponse(200, 'save card called.. the following was received - '.$json);
+        
+        if ($json == ''){
+            sendResponse(400, 'No valid Json received and stored');
+            return false;
+        }
+        
+        $card = json_decode($json, false);
+        
+        /* set some defaults */
+        if (isset($card->owner->id)) {
+            $owner = $card->owner->id;
+        } else {
+            $owner = '';
+        }
+        if (isset($card->createdOn)){
+            $createdOn = $card->createdOn;
+        } else {
+            $createdOn = 0;
+        }
+        if (isset($card->lastChange)){
+            $lastChange = $card->lastChange;
+        } else {
+            $lastChange = 0;
+        }
+        
+        /* test if card exists */
+        $this->db->where ("id", $card->id);
+        $result = $this->db->getOne ("card");
+        
+        /* if exists then update card */
+        if ($result) {
+            
+            $updateData = Array (
+                'name' => $card->name,
+                'description' => $card->details,
+                'color' => $card->color,
+                'owner' => $owner,
+                'createdOn' => $createdOn,
+                'lastChange' => $lastChange,
+                'json' => $json
+            );
+            $this->db->where ('id', $card->id);
+            if ($this->db->update ('card', $updateData))
+            {
+                sendResponse(200, 'Card updated ');
+            } else {
+                sendResponse(400, 'ERROR: could not update card ');
+            }
+            
+        } else {
+        
+        /* else create card */
+            
+            $insertData = Array (
+                'id' => $card->id,
+                'name' => $card->name,
+                'description' => $card->details,
+                'color' => $card->color,
+                'owner' => $owner,
+                'createdOn' => $createdOn,
+                'lastChange' => $lastChange,
+                'json' => $json
+            );
+            if ($this->db->insert ('card', $insertData)) {
+                sendResponse(200, 'Card stored ');
+            } else {
+                sendResponse(400, 'ERROR: could not store card ');
+            }
+        }
     }
 
     function deletecard($json){

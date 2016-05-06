@@ -81,3 +81,42 @@ ALTER TABLE `kanbanAll`
 --
 ALTER TABLE `kanbanAll`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+
+-- phpMyAdmin SQL Dump
+-- version 4.2.10
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost:8889
+-- Generation Time: May 06, 2016 at 09:19 PM
+-- Server version: 5.5.38
+-- PHP Version: 5.6.2
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Database: `kanban`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `card`
+--
+
+CREATE TABLE `card` (
+  `id` varchar(256) NOT NULL,
+  `name` varchar(256) NOT NULL,
+  `description` longtext NOT NULL,
+  `color` varchar(256) NOT NULL,
+  `owner` longtext NOT NULL,
+  `createdOn` bigint(20) NOT NULL,
+  `lastChange` bigint(20) NOT NULL,
+  `json` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for table `card`
+--
+ALTER TABLE `card`
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `id` (`id`);
