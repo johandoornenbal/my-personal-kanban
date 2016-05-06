@@ -61,6 +61,17 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     }
     autosave();
 
+    // <-------- Backend saving events ---------------> //
+    /*
+        The events are:
+        - change in column
+        - change in card
+        - card deleted
+        - users changed
+        - archive changed
+        - kanban settings changed
+    */
+
     $scope.$on('saveColumnsAndCards', function(){
         var i;
         var cardToSave;
@@ -91,6 +102,32 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
     });
 
+    $scope.$on('cardDeleted', function(e, cardId){
+        //TODO: hook here
+        console.log("deleting card with id : " + cardId);
+        //TODO: temporary save all untill more refined api - then use hooks above
+        tempSave();
+    });
+
+    $scope.$on('usersChanged', function(){
+        //TODO: hook here
+        console.log("saving users");
+        //TODO: temporary save all untill more refined api - then use hooks above
+        tempSave();
+    });
+
+    $scope.$on('archiveChanged', function(){
+        //TODO: hook here
+        console.log("saving archive");
+    });
+
+    $scope.$on('kanbanSettingsChanged', function(){
+        //TODO: hook here
+        console.log("saving kanban settings");
+        //TODO: temporary save all untill more refined api - then use hooks above
+        tempSave();
+    });
+
     // TODO: temporary until more refind API
     var tempSave = function(){
         if (!$scope.reloading && !$scope.connectionLost){
@@ -103,6 +140,8 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             }
         }
     };
+
+    // <-------- Backend connection actions ---------------> //
 
     $scope.$on('connectionLost', function(){
         $translate("CONNECTION_LOST").then(function successFn(translation) {
@@ -125,6 +164,8 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         });
     });
 
+    // <-------- Kanban changed actions ---------------> //
+
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 		detectChangesInColumns();
@@ -134,9 +175,12 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     	detectChangesInCards();
     });
 
+
 	function calculateColumnWidth(numberOfColumns){
 		return Math.floor((100 / numberOfColumns) * 100) / 100;
 	}
+
+	// <-------- Kanban menu actions ---------------> //
 
 	$scope.kanbanMenu = {};
 
@@ -191,18 +235,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             $scope.cardWatchFirst = false;
             $scope.columnWatchFirst = false;
         }, 1000);
-
-//        $scope.$watch('kanban', function(){
-//            if (!$scope.reloading){
-//                if ($scope.reloadNoSave) {
-//                    // skip this save
-//                    $scope.reloadNoSave = false;
-//                } else {
-//                    kanbanRepository.saveSingle();
-//                    $scope.timeStampLastSave = new Date().getTime();
-//                }
-//            }
-//        }, true);
 
         detectChangesInCards();
         detectChangesInColumns();

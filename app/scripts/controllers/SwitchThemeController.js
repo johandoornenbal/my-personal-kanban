@@ -14,6 +14,7 @@ var SwitchThemeController = function ($scope, themesProvider, kanbanRepository, 
 	$scope.switchTheme = function(){
 		themesProvider.setCurrentTheme($scope.model.selectedTheme);
 		kanbanRepository.setTheme($scope.model.selectedTheme);
+		$scope.$emit("kanbanSettingsChanged");
 		pollingService.setSelfChangeInProgress(false);
 	};
 

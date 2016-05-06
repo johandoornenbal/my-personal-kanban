@@ -31,6 +31,7 @@ angular.module('mpk').controller('ArchiveController', function ArchiveController
 			if (archivedWithSelection.selected){
 				$scope.model.archived.splice($scope.model.archived.indexOf(archivedWithSelection), 1);
 				kanbanManipulator.unarchiveCard($scope.model.kanban, archivedWithSelection.original);
+				$scope.$emit("archiveChanged");
 			}
 		});
 	};
@@ -40,6 +41,8 @@ angular.module('mpk').controller('ArchiveController', function ArchiveController
 			if (archivedWithSelection.selected){
 				$scope.model.archived.splice($scope.model.archived.indexOf(archivedWithSelection), 1);
 				kanbanManipulator.removeFromArchive($scope.model.kanban, archivedWithSelection.original);
+				$scope.$emit("archiveChanged");
+				$scope.$emit("cardDeleted", archivedWithSelection.card.id);
 			}
 		});
 	};

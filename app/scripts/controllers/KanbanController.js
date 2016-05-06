@@ -11,6 +11,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	    pollingService.setSelfChangeInProgress(true);
 		if (confirm('You sure?')){
 			kanbanManipulator.removeCardFromColumn($scope.kanban, column, card);
+			$scope.$emit('cardDeleted', card.id);
 		}
 		pollingService.setSelfChangeInProgress(false);
 	};
@@ -24,6 +25,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	    $scope.newUser.id = uuidService.generateUUID();
 	    $scope.kanban.users.push($scope.newUser);
 	    $scope.newUser = {};
+	    $scope.$emit('usersChanged');
 	};
 
 	$scope.deleteUser = function(user){
@@ -34,6 +36,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
                    $scope.kanban.users.splice($scope.kanban.users.indexOf(u), 1);
                }
             });
+            $scope.$emit('usersChanged');
         }
         pollingService.setSelfChangeInProgress(false);
     };
@@ -77,6 +80,7 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	};
 
 	$scope.archive = function(kanban, column, card){
+	    $scope.$emit('archiveChanged');
 		return kanbanManipulator.archiveCard(kanban, column, card);
 	};
 
@@ -96,6 +100,9 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 
 	$scope.$on('DeleteColumn', function(e, column){
 	    pollingService.setSelfChangeInProgress(true);
+	    column.cards.forEach(function(card){
+	            $scope.$emit('cardDeleted', card.id);
+	    });
 		kanbanManipulator.removeColumn($scope.kanban, column);
 		$scope.$emit('ColumnsChanged');
 		pollingService.setSelfChangeInProgress(false);
