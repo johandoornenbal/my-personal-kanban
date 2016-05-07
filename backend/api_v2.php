@@ -3,7 +3,6 @@ require_once 'PHP-MySQLi-Database-Class-master/MysqliDb.php';
 include("apiSettings.php");
 include("apiHelpers.php");
 
-
 class KanbanAPI {
 
     var $db;
@@ -16,6 +15,65 @@ class KanbanAPI {
     // Destructor - close DB connection
     function __destruct() {
         $this->db->close();
+    }
+    
+        
+    function getkanban($kanbanId){   
+        $this->db->where ("id", $kanbanId);
+        $result = $this->db->getOne ("kanban");
+        
+        //TODO: create Json from kanban, columns and cards
+        
+        $kanbanObj = json_decode($result["json"]);
+        
+        $users = $kanbanObj->singlekanban->users;
+        $settings = $kanbanObj->singlekanban->settings;
+        $archived = $kanbanObj->singlekanban->archived;
+        
+        $columnIds = json_decode($result["columns"]);
+        // var_dump($columnIds);
+        
+        $columnsForExport = Array();
+        $i=0;
+        foreach($columnIds as $columnId){
+            $this->db->where ("id", $columnId);
+            $column_result = $this->db->getOne ("kanbanColumn");
+            if ($column_result) {
+                $singleColumn = json_decode($column_result["json"]);
+                $cardsForExport = Array();
+                foreach($singleColumn->cards as $cardId){
+                    $this->db->where ("id", $cardId);
+                    $card_result = $this->db->getOne ("card");
+                    $cardsForExport[] = json_decode($card_result["json"]);
+                }
+                $columnsForExport[$i]->id = $singleColumn->id;
+                $columnsForExport[$i]->name = $singleColumn->name;
+                $columnsForExport[$i]->settings = $singleColumn->settings;
+                $columnsForExport[$i]->cards = $cardsForExport;                
+            }     
+            $i++;
+        }
+        
+        $kanban = Array(
+            "id" => $kanbanId, 
+            "name" =>$result["name"], 
+            "numberOfColumns" => $result["numberOfColumns"],
+            "columns" => $columnsForExport,
+            "users" => $users,
+            "settings" => $settings,
+            "archived" => $archived
+        );
+        
+        $payload = Array(
+            "singlekanban" => $kanban
+        );
+        
+        if ($result) {
+            $json = json_encode($payload);
+            sendResponse(200, $json);
+        } else {
+            sendResponse(400, "kanban not found");
+        }
     }
 
     function savecard($json){
@@ -228,15 +286,73 @@ class KanbanAPI {
     }
 
     function saveusers($json){
-        sendResponse(200, 'save users called.. the following was received - '.$json);
+        
+        $kanban = json_decode($json, false);
+        $this->db->where ("id", $kanban->id);
+        $update = Array (
+            'name' => $kanban->name,
+            'numberOfColumns' => $kanban->numberOfColumns,
+            'columns' => json_encode($kanban->columns),
+            'settings' => '', //todo: settings dummy for the moment
+            'json' => $json,
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => $kanban->browser,
+            'event' => "USER_UPDATE",
+            'eventdetails' => $kanban->id
+        );
+        $result = $this->db->update ("kanban", $update);
+        if ($result){
+            sendResponse(200, 'save users called and executed .. the following was received - '.$json);
+        } else {
+            sendResponse(400, 'ERROR saving users .. the following was received - '.$json);
+        }
+        
     }
 
     function savearchive($json){
-        sendResponse(200, 'save archive called.. the following was received - '.$json);
+        
+        $kanban = json_decode($json, false);
+        $this->db->where ("id", $kanban->id);
+        $update = Array (
+            'name' => $kanban->name,
+            'numberOfColumns' => $kanban->numberOfColumns,
+            'settings' => '', //todo: settings dummy for the moment
+            'json' => $json,
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => $kanban->browser,
+            'event' => "ARCHIVE_UPDATE",
+            'eventdetails' => $kanban->id
+        );
+        $result = $this->db->update ("kanban", $update);
+        if ($result){
+            sendResponse(200, 'save archive called and executed .. the following was received - '.$json);
+        } else {
+            sendResponse(400, 'ERROR saving archive .. the following was received - '.$json);
+        }
+        
     }
 
     function savesettings($json){
-        sendResponse(200, 'save settings called.. the following was received - '.$json);
+        
+        $kanban = json_decode($json, false);
+        $this->db->where ("id", $kanban->id);
+        $update = Array (
+            'name' => $kanban->name,
+            'numberOfColumns' => $kanban->numberOfColumns,
+            'settings' => '', //todo: settings dummy for the moment
+            'json' => $json,
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => $kanban->browser,
+            'event' => "SETTINGS_UPDATE",
+            'eventdetails' => $kanban->id
+        );
+        $result = $this->db->update ("kanban", $update);
+        if ($result){
+            sendResponse(200, 'save settings called and executed .. the following was received - '.$json);
+        } else {
+            sendResponse(400, 'ERROR saving settings .. the following was received - '.$json);
+        }
+        
     }
     
     function getcard($cardId){   
@@ -258,18 +374,6 @@ class KanbanAPI {
             sendResponse(200, $json);
         } else {
             sendResponse(400, "column not found");
-        }
-    }
-    
-    function getkanban($kanbanId){   
-        $this->db->where ("id", $kanbanId);
-        $result = $this->db->getOne ("kanban");
-        //TODO: create Json from kanban, columns and cards
-        if ($result) {
-            $json = $result["json"];
-            sendResponse(200, $json);
-        } else {
-            sendResponse(400, "kanban not found");
         }
     }
     

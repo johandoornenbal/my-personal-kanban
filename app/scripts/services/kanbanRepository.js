@@ -70,6 +70,27 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           return columnPrepared;
      };
 
+     var kanbanAdapter = function(kanban){
+
+          // prepare kanban to save
+          var kanbanPrepared = {};
+          kanbanPrepared.id = kanban.id;
+          kanbanPrepared.name = kanban.name;
+          kanbanPrepared.numberOfColumns = kanban.numberOfColumns;
+          kanbanPrepared.settings = kanban.settings;
+          kanbanPrepared.users = kanban.users;
+          kanbanPrepared.archived = kanban.archived;
+          kanbanPrepared.browser = browser;
+          var columnsPrep = [];
+          kanban.columns.forEach(function(column){
+                columnsPrep.push(column.id);
+          });
+          kanbanPrepared.columns = columnsPrep;
+
+          return kanbanPrepared;
+
+     };
+
   return {
     kanbansByName : {},
     lastUsed : '',
@@ -214,7 +235,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           var defer = $q.defer();
           $http({
                   method: 'GET',
-                  url: BACKEND_URI + 'api.php/' + $uuid,
+                  url: BACKEND_URI + 'api_v2.php/kanban/' + $uuid,
                   cache: false,
                   dataType: "json",
                   headers: {
@@ -231,7 +252,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
     },
 
     restApiPoll : function(kanbanId) {
-          console.log("Polling backend for kanban with id " + kanbanId);
+          console.log("Polling backend for kanban with id " + kanbanId + " and browser with id " + browser);
           var defer = $q.defer();
           $http({
                   method: 'GET',
@@ -288,18 +309,21 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           return postToBackend(BACKEND_URI + 'api_v2.php/deletecolumn', payload);
     },
 
-    saveUsers : function() {
-          var payload = angular.toJson("some users payload", false);
+    saveUsers : function(kanban) {
+          var kanbanPrepared = kanbanAdapter(kanban);
+          var payload = angular.toJson(kanbanPrepared, false);
           return postToBackend(BACKEND_URI + 'api_v2.php/saveusers', payload);
     },
 
-    saveArchive : function() {
-          var payload = angular.toJson("some archive payload", false);
+    saveArchive : function(kanban) {
+          var kanbanPrepared = kanbanAdapter(kanban);
+          var payload = angular.toJson(kanbanPrepared, false);
           return postToBackend(BACKEND_URI + 'api_v2.php/savearchive', payload);
     },
 
-    saveSettings : function() {
-          var payload = angular.toJson("some settings payload", false);
+    saveSettings : function(kanban) {
+          var kanbanPrepared = kanbanAdapter(kanban);
+          var payload = angular.toJson(kanbanPrepared, false);
           return postToBackend(BACKEND_URI + 'api_v2.php/savesettings', payload);
     },
 
