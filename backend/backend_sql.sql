@@ -8,7 +8,6 @@
 -- PHP Version: 5.6.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
 
 --
 -- Database: `kanban`
@@ -91,14 +90,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 -- Server version: 5.5.38
 -- PHP Version: 5.6.2
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
 
---
--- Database: `kanban`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `card`
@@ -119,4 +111,27 @@ CREATE TABLE `card` (
 -- Indexes for table `card`
 --
 ALTER TABLE `card`
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `id` (`id`);
+
+
+--
+-- Table structure for table `column`
+--
+
+CREATE TABLE `kanbanColumn` (
+  `id` varchar(256) NOT NULL,
+  `name` varchar(256) NOT NULL,
+  `cards` longtext NOT NULL,
+  `settings` longtext NOT NULL,
+  `json` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `column`
+--
+ALTER TABLE `kanbanColumn`
  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `id` (`id`);

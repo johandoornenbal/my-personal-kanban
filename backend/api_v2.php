@@ -43,6 +43,7 @@ class KanbanAPI {
         } else {
             $lastChange = 0;
         }
+        $serverTime = intval(microtime(true)*1000);
         
         /* test if card exists */
         $this->db->where ("id", $card->id);
@@ -57,7 +58,7 @@ class KanbanAPI {
                 'color' => $card->color,
                 'owner' => $owner,
                 'createdOn' => $createdOn,
-                'lastChange' => $lastChange,
+                'lastChange' => $serverTime,
                 'json' => $json
             );
             $this->db->where ('id', $card->id);
@@ -84,8 +85,10 @@ class KanbanAPI {
             );
             if ($this->db->insert ('card', $insertData)) {
                 sendResponse(200, 'Card stored ');
+                return true;
             } else {
                 sendResponse(400, 'ERROR: could not store card ');
+                return false;
             }
         }
     }
@@ -95,7 +98,69 @@ class KanbanAPI {
     }
 
     function savecolumn($json){
-        sendResponse(200, 'save column called.. the following was received - '.$json);
+        
+        if ($json == ''){
+            sendResponse(400, 'No valid Json received and stored');
+            return false;
+        }
+
+        $column = json_decode($json, false);
+        // var_dump($column);
+         
+        /* prepare cards */
+        $cards = array();
+        foreach($column->cards as $card){
+            $cards[] = $card->id;
+        }
+        
+        /* prepare settings */
+        $settings = array();
+        foreach($column->settings as $key=>$setting){
+            $settings[$key] = $setting;
+        }
+        
+        /* test if column exists */
+        $this->db->where ("id", $column->id);
+        $result = $this->db->getOne ("kanbanColumn");
+        
+        /* if exists then update column */
+        if ($result) {
+            
+            $updateData = Array (
+                'name' => $column->name,
+                'cards' => serialize($cards),
+                'settings' => serialize($settings),
+                'json' => $json
+            );
+            $this->db->where ('id', $column->id);
+            if ($this->db->update ('kanbanColumn', $updateData))
+            {
+                sendResponse(200, 'Column updated ');
+            } else {
+                sendResponse(400, 'ERROR: could not update column ');
+            }
+            
+        } else {
+            
+        /* else create column */    
+            $insertData = Array (
+                'id' => $column->id,
+                'name' => $column->name,
+                'cards' => serialize($cards),
+                'settings' => serialize($settings),
+                'json' => $json
+            );
+            //var_dump($insertData);
+            if ($this->db->insert('kanbanColumn', $insertData)) {
+                sendResponse(200, 'Column stored ');
+                return true;
+            } else {
+                sendResponse(400, 'ERROR: could not store column ');
+                return false;
+            }            
+        }
+        
+
     }
 
     function deletecolumn($json){

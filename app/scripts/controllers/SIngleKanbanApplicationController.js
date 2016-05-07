@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('mpk').controller('SingleKanbanApplicationController',
-	function ApplicationController($scope, $window, kanbanRepository, pollingService, themesProvider, $routeParams, $location, cloudService, $translate, $timeout) {
+	function ApplicationController($scope, $window, kanbanRepository, pollingService, themesProvider, $routeParams, $location, cloudService, $translate, $timeout, uuidService) {
 
 
     $scope.allCards = [];
@@ -94,6 +94,9 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         for (i=0; i < allColumnsToSave.length; i++){
             columnToSave = allColumnsToSave[i];
             //TODO: hook here
+            if (columnToSave.id == undefined) {
+                columnToSave.id = uuidService.generateUUID();
+            }
             kanbanRepository.saveColumn(columnToSave).then(
                 function(data){
                     console.log(data);
