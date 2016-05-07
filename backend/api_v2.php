@@ -28,11 +28,6 @@ class KanbanAPI {
         $card = json_decode($json, false);
         
         /* set some defaults */
-        if (isset($card->owner->id)) {
-            $owner = $card->owner->id;
-        } else {
-            $owner = '';
-        }
         if (isset($card->createdOn)){
             $createdOn = $card->createdOn;
         } else {
@@ -43,6 +38,7 @@ class KanbanAPI {
         } else {
             $lastChange = 0;
         }
+        $owner = json_encode($card->owner);
         $serverTime = intval(microtime(true)*1000);
         
         /* test if card exists */
@@ -59,13 +55,16 @@ class KanbanAPI {
                 'owner' => $owner,
                 'createdOn' => $createdOn,
                 'lastChange' => $serverTime,
-                'json' => $json
+                'json' => $json,
+                'kanban' => $card->kanbanId
             );
             $this->db->where ('id', $card->id);
             if ($this->db->update ('card', $updateData))
             {
+                $event = "CARD_UPDATE";
                 sendResponse(200, 'Card updated ');
             } else {
+                $event = "FAILED_CARD_UPDATE";
                 sendResponse(400, 'ERROR: could not update card ');
             }
             
@@ -81,16 +80,28 @@ class KanbanAPI {
                 'owner' => $owner,
                 'createdOn' => $createdOn,
                 'lastChange' => $lastChange,
-                'json' => $json
+                'json' => $json,
+                'kanban' => $card->kanbanId
             );
             if ($this->db->insert ('card', $insertData)) {
+                $event = "CARD_CREATE";
                 sendResponse(200, 'Card stored ');
-                return true;
             } else {
+                $event = "FAILED_CARD_CREATE";
                 sendResponse(400, 'ERROR: could not store card ');
-                return false;
             }
         }
+        
+        /* update kanban with timestamp and event details */
+        $this->db->where ("id", $card->kanbanId);
+        $update = Array (
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => $card->browser,
+            'event' => $event,
+            'eventdetails' => $card->id
+        );
+        $result = $this->db->update ("kanban", $update);
+        
     }
 
     function deletecard($json){
@@ -108,16 +119,10 @@ class KanbanAPI {
         // var_dump($column);
          
         /* prepare cards */
-        $cards = array();
-        foreach($column->cards as $card){
-            $cards[] = $card->id;
-        }
+        $cards = json_encode($column->cards);
         
         /* prepare settings */
-        $settings = array();
-        foreach($column->settings as $key=>$setting){
-            $settings[$key] = $setting;
-        }
+        $settings = json_encode($column->settings);
         
         /* test if column exists */
         $this->db->where ("id", $column->id);
@@ -128,15 +133,18 @@ class KanbanAPI {
             
             $updateData = Array (
                 'name' => $column->name,
-                'cards' => serialize($cards),
-                'settings' => serialize($settings),
-                'json' => $json
+                'cards' => $cards,
+                'settings' => $settings,
+                'json' => $json,
+                'kanban' => $column->kanbanId
             );
             $this->db->where ('id', $column->id);
             if ($this->db->update ('kanbanColumn', $updateData))
             {
+                $event = "COLUMN_UPDATE";
                 sendResponse(200, 'Column updated ');
             } else {
+                $event = "FAILED_COLUMN_UPDATE";
                 sendResponse(400, 'ERROR: could not update column ');
             }
             
@@ -146,20 +154,30 @@ class KanbanAPI {
             $insertData = Array (
                 'id' => $column->id,
                 'name' => $column->name,
-                'cards' => serialize($cards),
-                'settings' => serialize($settings),
-                'json' => $json
+                'cards' => $cards,
+                'settings' => $settings,
+                'json' => $json,
+                'kanban' => $column->kanbanId
             );
             //var_dump($insertData);
             if ($this->db->insert('kanbanColumn', $insertData)) {
+                $event = "COLUMN_CREATE";
                 sendResponse(200, 'Column stored ');
-                return true;
             } else {
+                $event = "FAILED_COLUMN_CREATE";
                 sendResponse(400, 'ERROR: could not store column ');
-                return false;
             }            
         }
         
+        /* update kanban with timestamp and event details */
+        $this->db->where ("id", $column->kanbanId);
+        $update = Array (
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => $column->browser,
+            'event' => $event,
+            'eventdetails' => $column->id
+        );
+        $result = $this->db->update ("kanban", $update);        
 
     }
 
@@ -178,6 +196,54 @@ class KanbanAPI {
     function savesettings($json){
         sendResponse(200, 'save settings called.. the following was received - '.$json);
     }
+    
+    function getcard($cardId){   
+        $this->db->where ("id", $cardId);
+        $result = $this->db->getOne ("card");
+        if ($result) {
+            $json = $result["json"];
+            sendResponse(200, $json);
+        } else {
+            sendResponse(400, "card not found");
+        }
+    }
+    
+    function getcolumn($columnId){   
+        $this->db->where ("id", $columnId);
+        $result = $this->db->getOne ("kanbanColumn");
+        if ($result) {
+            $json = $result["json"];
+            sendResponse(200, $json);
+        } else {
+            sendResponse(400, "column not found");
+        }
+    }
+    
+    function getkanban($kanbanId){   
+        $this->db->where ("id", $kanbanId);
+        $result = $this->db->getOne ("kanban");
+        //TODO: create Json from kanban, columns and cards
+        if ($result) {
+            $json = $result["json"];
+            sendResponse(200, $json);
+        } else {
+            sendResponse(400, "kanban not found");
+        }
+    }
+    
+    function getpoll($kanbanId) {
+        $this->db->where ("id", $kanbanId);
+        $result = $this->db->getOne ("kanban");
+        $jsonObject = (object) array(
+                'servertimestamp' => $result['servertimestamp'],
+                'browser' => $result['browser'],
+                'event' => $result['event'],
+                'eventdetails' => $result['eventdetails']
+            );
+        $jsonResult = json_encode($jsonObject);
+        sendResponse(200, $jsonResult, 'application/json');
+        return true;
+    }    
 
     function store($kanbanId, $json, $timestamp, $servertimestamp, $browser) {
         if ($json == ''){
@@ -234,19 +300,7 @@ class KanbanAPI {
         sendResponse(200, $jsonResult, 'application/json');
         return true;
     }
-    
-    function usertimelastsave() {
-        $this->db->where ("id", 1);
-        $result = $this->db->getOne ("kanbanAll");
-        $jsonObject = (object) array(
-                'usertimestamp' => $result['timestamp'],
-                'browser' => $result['browser'],
-            );
-        $jsonResult = json_encode($jsonObject);
-        sendResponse(200, $jsonResult, 'application/json');
-        return true;
-    }
-        
+            
 }
 
 // This is the first thing that gets called when this page is loaded
@@ -272,29 +326,52 @@ $db = $DB_CONNECTION;
 
 $api = new KanbanAPI($db);
 $method = $_SERVER['REQUEST_METHOD'];
-$requestEndPoint = end(explode("/", $_SERVER['REQUEST_URI']));
-// var_dump($requestEndPoint);
+$uriArr = explode("/", $_SERVER['REQUEST_URI']);
+$requestEndPoint = array_pop($uriArr);
+//var_dump($requestEndPoint);
+$requestEndPointBefore = end($uriArr);
+//var_dump($requestEndPointBefore);
 
 switch ($method) {
         
     case "GET":
         
-        switch ($requestEndPoint) {
-
-            case "servertimelastsave":
-                $api->servertimelastsave();
-            break;
+        switch ($requestEndPointBefore) {
                 
-            case "usertimelastsave":
-                $api->usertimelastsave();
+            case "card":
+                $api->getcard($requestEndPoint);
             break;    
-            
-            default:
-                $api->load($requestEndPoint);
+        
+            case "column":
+                $api->getcolumn($requestEndPoint);
+            break;                  
+                
+            case "kanban":
+                $api->getkanban($requestEndPoint);
             break;
             
-        }
+            case "poll":
+                $api->getpoll($requestEndPoint);
+            break;    
+                
+            default:
+                
+                switch ($requestEndPoint) {
 
+                case "servertimelastsave":
+                    $api->servertimelastsave();
+                break; 
+
+                default:
+                    $api->load($requestEndPoint);
+                break;
+
+                }
+
+            break;
+                     
+        }
+        
         break;
         
     case "POST":

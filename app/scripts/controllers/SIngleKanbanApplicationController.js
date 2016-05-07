@@ -10,8 +10,10 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     $scope.allColumnListeners = [];
     $scope.allChangedCards = [];
     $scope.allChangedColumns = [];
-    $scope.cardWatchFirst = true;
-    $scope.columnWatchFirst = true;
+
+    $scope.noCardWatch = true; // do not watch right after (re-)loading -  no changes have to be persisted in backend
+    $scope.noColumnWatch = true; // do not watch right after (re-)loading -  no changes have to be persisted in backend
+
     $scope.connectionLost = false;
     $scope.timeStampLastSave = new Date().getTime();
 
@@ -19,7 +21,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     $scope.reloading = false; /* flag to indicate that changes to scope are due to reloading after loading data from backend */
     $scope.reloadNoSave = false; /* flag set by pol() and unset by $scope.$watch to indicate that changes to scope are due to reloading and are not to be saved */
 
-	// <-------- Polling backend for changes ---------------> //
+	// <-------- Polling the pollingservice for backend for changes ---------------> //
     var poll = function() {
         $timeout(function() {
             var time = new Date().getTime();
@@ -81,28 +83,24 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         var allCardsToSave = $scope.allChangedCards.slice();
         for (i=0; i < allCardsToSave.length; i++){
             cardToSave = allCardsToSave[i];
-            //TODO: hook here
-            kanbanRepository.saveCard(cardToSave).then(
+            kanbanRepository.saveCard(cardToSave, $scope.kanban.id).then(
                 function(data){
                     console.log(data);
                 });
             $scope.allChangedCards.splice(0,1);
-//            console.log($scope.allChangedCards);
         }
 
         var allColumnsToSave = $scope.allChangedColumns.slice();
         for (i=0; i < allColumnsToSave.length; i++){
             columnToSave = allColumnsToSave[i];
-            //TODO: hook here
             if (columnToSave.id == undefined) {
                 columnToSave.id = uuidService.generateUUID();
             }
-            kanbanRepository.saveColumn(columnToSave).then(
+            kanbanRepository.saveColumn(columnToSave, $scope.kanban.id).then(
                 function(data){
                     console.log(data);
                 });
             $scope.allChangedColumns.splice(0,1);
-//            console.log($scope.allChangedColumns);
         }
 
         //TODO: temporary save all untill more refined api - then use hooks above
@@ -114,7 +112,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
     $scope.$on('cardDeleted', function(e, cardId){
         //TODO: hook here
-        kanbanRepository.deleteCard(cardId).then(
+        kanbanRepository.deleteCard(cardId, $scope.kanban.id).then(
             function(data){
                 console.log(data);
             });
@@ -124,7 +122,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
     $scope.$on('ColumnDeleted', function(e, columnId){
         //TODO: hook here
-        kanbanRepository.deleteColumn(columnId).then(
+        kanbanRepository.deleteColumn(columnId, $scope.kanban.id).then(
             function(data){
                 console.log(data);
             });
@@ -258,9 +256,9 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
         // take 1 second in order to load from db and set up the listeners - then start polling and listening for changes
         $timeout(function() {
-            pollingService.poll();
-            $scope.cardWatchFirst = false;
-            $scope.columnWatchFirst = false;
+            pollingService.poll($scope.kanban.id);
+            $scope.noCardWatch = false;
+            $scope.noColumnWatch = false;
         }, 1000);
 
         detectChangesInCards();
@@ -310,16 +308,19 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         // detect change in a single card - register listeners (again)
         for ($i=0; $i<$scope.allCards.length; $i++){
             $scope.allCardListeners.push($scope.$watch('allCards[' + $i + ']', function(newValue, oldValue){
-                if (!$scope.cardWatchFirst){
-//                    console.log("change in card detected");
-//                    console.log(oldValue);
-//                    console.log(newValue);
+                if (!$scope.noCardWatch){
+
+                    /* prevent column watcher from seeing this change*/
+                    $scope.noColumnWatch = true;
                     if (searchById(newValue.id, $scope.allChangedCards)>=0){
                         $scope.allChangedCards.splice(searchById(newValue.id, $scope.allChangedCards), 1);
-//                        console.log("card found");
                     }
                     $scope.allChangedCards.push(newValue);
-//                    console.log($scope.allChangedCards);
+
+                    /* prevent column watcher from seeing this change: a little timeout before watching for changes again*/
+                    $timeout(function(){
+                        $scope.noColumnWatch = false;
+                    },10);
                 }
             }, true));
 
@@ -338,7 +339,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
          // detect change in a single column - register listeners (again)
          for ($i=0; $i < $scope.kanban.columns.length; $i++){
              $scope.allColumnListeners.push($scope.$watch('kanban.columns['+ $i  + ']', function(newValue, oldValue){
-                if (!$scope.columnWatchFirst){
+                if (!$scope.noColumnWatch){
 //                    console.log("change in column detected");
 //                    console.log(oldValue);
 //                    console.log(newValue);

@@ -52,7 +52,9 @@ class KanbanAPI {
             'json' => $json,
             'timestamp' => $timestamp,
             'servertimestamp' => $servertimestamp,
-            'browser' => $browser
+            'browser' => $browser,
+            'event' => 'UPDATE',
+            'eventdetails' =>  $id  
             );
             $this->db->where ('id', $id);
             if ($this->db->update ('kanban', $data))
@@ -70,7 +72,9 @@ class KanbanAPI {
                 'json' => $json,
                 'timestamp' => $timestamp,
                 'servertimestamp' => $servertimestamp,
-                'browser' => $browser
+                'browser' => $browser,
+                'event' => 'CREATE',
+                'eventdetails' => '' 
             );
             if ($this->db->insert ('kanban', $insertData)) {
                 sendResponse(200, 'Json stored ');

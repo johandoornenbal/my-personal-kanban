@@ -28,7 +28,9 @@ class KanbanAPI {
             'json' => $json,
             'timestamp' => $timestamp,
             'servertimestamp' => $servertimestamp,
-            'browser' => $browser
+            'browser' => $browser,
+            'event' => 'UPDATE',
+            'eventdetails' =>  $kanbanId  
         );
         $this->db->where ('id', $kanbanId);
         if ($this->db->update ('kanban', $data))
