@@ -203,7 +203,28 @@ class KanbanAPI {
     }
 
     function deletecolumn($json){
-        sendResponse(200, 'delete column called.. the following was received - '.$json);
+        
+        $columnToDelete = json_decode($json, false);
+        $this->db->where ("id", $columnToDelete->columnId);
+        $result = $this->db->delete('kanbanColumn');
+        if ($result) {
+            $event = "COLUMN_DELETE";
+            sendResponse(200, 'delete column called and executed.. the following was received - '.$json);
+        } else {
+            $event = "FAILING_COLUMN_DELETE";
+            sendResponse(400, 'ERROR deleting column .. the following was received - '.$json);
+        }
+        
+        /* update kanban with timestamp and event details */
+        $this->db->where ("id", $columnToDelete->kanbanId);
+        $update = Array (
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => $columnToDelete->browser,
+            'event' => $event,
+            'eventdetails' => $columnToDelete->id
+        );
+        $result = $this->db->update ("kanban", $update);
+        
     }
 
     function saveusers($json){

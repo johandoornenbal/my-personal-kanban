@@ -194,6 +194,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 		detectChangesInColumns();
+		tempSave();
 	});
 
 	$scope.$on('newCardAdded', function(){
