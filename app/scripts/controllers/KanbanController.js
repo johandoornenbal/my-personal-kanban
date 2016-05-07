@@ -80,7 +80,6 @@ angular.module('mpk').controller('KanbanController', function KanbanController($
 	};
 
 	$scope.archive = function(kanban, column, card){
-	    $scope.$emit('archiveChanged');
 		kanbanManipulator.archiveCard(kanban, column, card);
 		$scope.$emit('archiveChanged');
 	};

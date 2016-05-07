@@ -40,9 +40,9 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                 && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave + 100 // allow 100 for back-end save
             ) {
                 $scope.reloadNoSave = true;
-                pollingService.setPauze(true);
-                $scope.reloading = true;
                 kanbanRepository.loadKanban($routeParams.kanbanId).then(function(data){
+                    pollingService.setPauze(true);
+                    $scope.reloading = true;
                     reload(data);
                     pollingService.setNoChange();
                     pollingService.setPauze(false);
