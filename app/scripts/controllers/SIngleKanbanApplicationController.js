@@ -39,10 +39,10 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                 && pollingService.getSelfChangeInProgress() !== true
                 && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave + 100 // allow 100 for back-end save
             ) {
+                $scope.reloadNoSave = true;
+                pollingService.setPauze(true);
+                $scope.reloading = true;
                 kanbanRepository.loadKanban($routeParams.kanbanId).then(function(data){
-                    pollingService.setPauze(true);
-                    $scope.reloading = true;
-                    $scope.reloadNoSave = true;
                     reload(data);
                     pollingService.setNoChange();
                     pollingService.setPauze(false);
@@ -58,7 +58,14 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     var autosave = function(){
         $timeout(function(){
 //            console.log("start autosave");
-            $scope.$broadcast("saveColumnsAndCards");
+            if (!$scope.reloading && !$scope.connectionLost){
+                if ($scope.reloadNoSave) {
+                    // skip this save
+                    $scope.reloadNoSave = false;
+                } else {
+                    $scope.$broadcast("saveColumnsAndCards");
+                }
+            }
             autosave();
         }, 1000);
     }
@@ -143,19 +150,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                 console.log(data);
             });
     });
-
-//    // TODO: temporary until more refind API
-//    var tempSave = function(){
-//        if (!$scope.reloading && !$scope.connectionLost){
-//            if ($scope.reloadNoSave) {
-//                // skip this save
-//                $scope.reloadNoSave = false;
-//            } else {
-//                kanbanRepository.saveSingle();
-//                $scope.timeStampLastSave = new Date().getTime();
-//            }
-//        }
-//    };
 
     // <-------- Backend connection actions ---------------> //
 

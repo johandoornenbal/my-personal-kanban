@@ -80,6 +80,8 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           kanbanPrepared.settings = kanban.settings;
           kanbanPrepared.users = kanban.users;
           kanbanPrepared.archived = kanban.archived;
+          console.log("archive " + kanban.archived);
+          console.log("archive " + kanbanPrepared.archived);
           kanbanPrepared.browser = browser;
           var columnsPrep = [];
           kanban.columns.forEach(function(column){
