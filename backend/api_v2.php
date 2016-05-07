@@ -25,10 +25,20 @@ class KanbanAPI {
         //TODO: create Json from kanban, columns and cards
         
         $kanbanObj = json_decode($result["json"]);
+        // var_dump($kanbanObj->users);
         
-        $users = $kanbanObj->singlekanban->users;
-        $settings = $kanbanObj->singlekanban->settings;
-        $archived = $kanbanObj->singlekanban->archived;
+        $users = Array();
+        if (isset($kanbanObj->users)){
+            $users = $kanbanObj->users;
+        }
+        $settings = new stdClass();
+        if (isset($kanbanObj->settings)){
+            $settings = $kanbanObj->settings;
+        }
+        $archived = Array();
+        if (isset($kanbanObj->archived)){
+            $archived = $kanbanObj->archived;
+        }
         
         $columnIds = json_decode($result["columns"]);
         // var_dump($columnIds);
@@ -316,6 +326,7 @@ class KanbanAPI {
         $update = Array (
             'name' => $kanban->name,
             'numberOfColumns' => $kanban->numberOfColumns,
+            'columns' => json_encode($kanban->columns),
             'settings' => '', //todo: settings dummy for the moment
             'json' => $json,
             'servertimestamp' => intval(microtime(true)*1000),
@@ -339,6 +350,31 @@ class KanbanAPI {
         $update = Array (
             'name' => $kanban->name,
             'numberOfColumns' => $kanban->numberOfColumns,
+            'columns' => json_encode($kanban->columns),
+            'settings' => '', //todo: settings dummy for the moment
+            'json' => $json,
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => $kanban->browser,
+            'event' => "SETTINGS_UPDATE",
+            'eventdetails' => $kanban->id
+        );
+        $result = $this->db->update ("kanban", $update);
+        if ($result){
+            sendResponse(200, 'save settings called and executed .. the following was received - '.$json);
+        } else {
+            sendResponse(400, 'ERROR saving settings .. the following was received - '.$json);
+        }
+        
+    }
+    
+    function updatekanban($json){
+        
+        $kanban = json_decode($json, false);
+        $this->db->where ("id", $kanban->id);
+        $update = Array (
+            'name' => $kanban->name,
+            'numberOfColumns' => $kanban->numberOfColumns,
+            'columns' => json_encode($kanban->columns),
             'settings' => '', //todo: settings dummy for the moment
             'json' => $json,
             'servertimestamp' => intval(microtime(true)*1000),
@@ -496,6 +532,10 @@ switch ($method) {
                 $api->savesettings($content);
             break;
 
+            case "updatekanban":
+                $api->updatekanban($content);
+            break;    
+                
             default:
                 sendResponse(400, 'ERROR: endpoint not known ');
             break;

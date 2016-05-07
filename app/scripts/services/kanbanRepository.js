@@ -331,6 +331,12 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           return postToBackend(BACKEND_URI + 'api_v2.php/savesettings', payload);
     },
 
+    updateKanban : function(kanban) {
+          var kanbanPrepared = kanbanAdapter(kanban);
+          var payload = angular.toJson(kanbanPrepared, false);
+          return postToBackend(BACKEND_URI + 'api_v2.php/updatekanban', payload);
+    },
+
     load: function(){
       var saved = angular.fromJson(localStorage.getItem('myPersonalKanban'));
       if (saved === null) {

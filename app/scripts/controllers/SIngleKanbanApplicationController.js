@@ -48,16 +48,16 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                     pollingService.setPauze(false);
                 });
             }
-//            console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
-//            console.log('change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
+            console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
+            console.log('change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
             poll();
-        }, 200);
+        }, 5000);
     };
     poll();
 
     var autosave = function(){
         $timeout(function(){
-            console.log("start autosave");
+//            console.log("start autosave");
             $scope.$broadcast("saveColumnsAndCards");
             autosave();
         }, 1000);
@@ -113,6 +113,10 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
     $scope.$on('ColumnDeleted', function(e, columnId){
         kanbanRepository.deleteColumn(columnId, $scope.kanban.id).then(
+            function(data){
+                console.log(data);
+            });
+        kanbanRepository.updateKanban($scope.kanban).then(
             function(data){
                 console.log(data);
             });
@@ -176,6 +180,13 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     });
 
     // <-------- Kanban changed actions ---------------> //
+
+	$scope.$on('ColumnAdded', function(){
+	        kanbanRepository.updateKanban($scope.kanban).then(
+                function(data){
+                    console.log(data);
+                });
+    });
 
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
@@ -269,6 +280,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         }
 
         $scope.reloading = false;
+
         detectChangesInCards();
         detectChangesInColumns();
 
