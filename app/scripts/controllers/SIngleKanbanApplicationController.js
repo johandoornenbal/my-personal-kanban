@@ -39,7 +39,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                 && pollingService.getSelfChangeInProgress() !== true
                 && pollingService.getPolledTimeStampChange() > $scope.timeStampLastSave + 100 // allow 100 for back-end save
             ) {
-                kanbanRepository.singleRestApiLoad($routeParams.kanbanId).then(function(data){
+                kanbanRepository.loadKanban($routeParams.kanbanId).then(function(data){
                     pollingService.setPauze(true);
                     $scope.reloading = true;
                     $scope.reloadNoSave = true;
@@ -139,18 +139,18 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             });
     });
 
-    // TODO: temporary until more refind API
-    var tempSave = function(){
-        if (!$scope.reloading && !$scope.connectionLost){
-            if ($scope.reloadNoSave) {
-                // skip this save
-                $scope.reloadNoSave = false;
-            } else {
-                kanbanRepository.saveSingle();
-                $scope.timeStampLastSave = new Date().getTime();
-            }
-        }
-    };
+//    // TODO: temporary until more refind API
+//    var tempSave = function(){
+//        if (!$scope.reloading && !$scope.connectionLost){
+//            if ($scope.reloadNoSave) {
+//                // skip this save
+//                $scope.reloadNoSave = false;
+//            } else {
+//                kanbanRepository.saveSingle();
+//                $scope.timeStampLastSave = new Date().getTime();
+//            }
+//        }
+//    };
 
     // <-------- Backend connection actions ---------------> //
 
@@ -180,7 +180,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
 		detectChangesInColumns();
-		tempSave();
 	});
 
 	$scope.$on('newCardAdded', function(){
@@ -222,7 +221,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     var loadedRepo;
 
     // using db repo
-    loadedRepo = kanbanRepository.singleRestApiLoad($routeParams.kanbanId).then(function(data){
+    loadedRepo = kanbanRepository.loadKanban($routeParams.kanbanId).then(function(data){
 
         kanbanRepository.kanbansByName = data.singlekanban;
         kanbanRepository.theme = data.theme;
@@ -250,7 +249,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
         detectChangesInCards();
         detectChangesInColumns();
-//        console.log($scope.allCardListeners.length);
 
     });
 
@@ -271,6 +269,8 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         }
 
         $scope.reloading = false;
+        detectChangesInCards();
+        detectChangesInColumns();
 
     };
 
@@ -288,7 +288,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         for ($i=0; $i < $scope.kanban.columns.length; $i++){
             for ($t=0; $t<$scope.kanban.columns[$i].cards.length; $t++){
                 $scope.allCards.push($scope.kanban.columns[$i].cards[$t]);
-//                console.log($scope.allCards.length);
             }
         }
 
@@ -327,15 +326,10 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
          for ($i=0; $i < $scope.kanban.columns.length; $i++){
              $scope.allColumnListeners.push($scope.$watch('kanban.columns['+ $i  + ']', function(newValue, oldValue){
                 if (!$scope.noColumnWatch){
-//                    console.log("change in column detected");
-//                    console.log(oldValue);
-//                    console.log(newValue);
                     if (searchByName(newValue.name, $scope.allChangedColumns)>=0){
                         $scope.allChangedColumns.splice(searchByName(newValue.name, $scope.allChangedColumns), 1);
-//                        console.log("column found");
                     }
                     $scope.allChangedColumns.push(newValue);
-//                    console.log($scope.allChangedColumns);
                 }
              }, true));
          }

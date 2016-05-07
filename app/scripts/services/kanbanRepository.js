@@ -135,120 +135,124 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
       return angular.toJson(toBeSerialized, false);
     },
 
-    save: function(){
-      var prepared = this.prepareSerializedKanbans();
+//    save: function(){
+//      var prepared = this.prepareSerializedKanbans();
+//
+//      console.log("saving locally");
+//      localStorage.setItem('myPersonalKanban', prepared);
+//
+//      console.log("saving to db");
+//
+//      var result = this.restApiSave(prepared);
+//      result.then(function(data){
+//        console.log(data);
+//      });
+//
+//      return this.kanbansByName;
+//    },
 
-      console.log("saving locally");
-      localStorage.setItem('myPersonalKanban', prepared);
+//    saveSingle: function(){
+//          var prepared = this.prepareSingleSerializedKanban();
+//
+//          console.log("saving single kanban locally");
+//          localStorage.setItem('mySinglePersonalKanban', prepared);
+//
+//          console.log("saving to single kanban db");
+//
+//          var result = this.singleRestApiSave(prepared);
+//          result.then(function(data){
+//            console.log(data);
+//          });
+//
+//          return this.kanbansByName;
+//    },
 
-      console.log("saving to db");
+//    restApiSave : function(payload) {
+//          var defer = $q.defer();
+//          $http({
+//                  method: 'POST',
+//                  url: BACKEND_URI + 'adminApi.php',
+//                  cache: false,
+//                  dataType: "json",
+//                  headers: {
+//                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+//                  },
+//                  data: payload
+//              })
+//              .then(function successCallback(response){
+//                    defer.resolve(response.data);
+//              },
+//              function errorCallback(response) {
+//                    defer.resolve(response.data);
+//              });
+//          return defer.promise;
+//    },
 
-      var result = this.restApiSave(prepared);
-      result.then(function(data){
-        console.log(data);
-      });
+//    restApiLoad : function() {
+//          console.log("loading from db storage");
+//          var defer = $q.defer();
+//          $http({
+//                  method: 'GET',
+//                  url: BACKEND_URI + 'adminApi.php',
+//                  cache: false,
+//                  dataType: "json",
+//                  headers: {
+//                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+//                  }
+//              })
+//              .then(function successCallback(response){
+//                    defer.resolve(response.data);
+//              },
+//              function errorCallback(response) {
+//                    defer.resolve(response.data);
+//              });
+//          return defer.promise;
+//    },
 
-      return this.kanbansByName;
-    },
+//    singleRestApiSave : function(payload) {
+//          var defer = $q.defer();
+//          $http({
+//                  method: 'POST',
+//                  url: BACKEND_URI + 'api.php',
+//                  cache: false,
+//                  dataType: "json",
+//                  headers: {
+//                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+//                  },
+//                  data: payload
+//              })
+//              .then(function successCallback(response){
+//                    defer.resolve(response.data);
+//              },
+//              function errorCallback(response) {
+//                    defer.resolve(response.data);
+//              });
+//          return defer.promise;
+//    },
 
-    saveSingle: function(){
-          var prepared = this.prepareSingleSerializedKanban();
+//    singleRestApiLoad : function($uuid) {
+//          console.log("loading from db storage");
+//          var defer = $q.defer();
+//          $http({
+//                  method: 'GET',
+//                  url: BACKEND_URI + 'api_v2.php/kanban/' + $uuid,
+//                  cache: false,
+//                  dataType: "json",
+//                  headers: {
+//                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
+//                  }
+//              })
+//              .then(function successCallback(response){
+//                    defer.resolve(response.data);
+//              },
+//              function errorCallback(response) {
+//                    defer.resolve(response.data);
+//              });
+//          return defer.promise;
+//    },
 
-          console.log("saving single kanban locally");
-          localStorage.setItem('mySinglePersonalKanban', prepared);
-
-          console.log("saving to single kanban db");
-
-          var result = this.singleRestApiSave(prepared);
-          result.then(function(data){
-            console.log(data);
-          });
-
-          return this.kanbansByName;
-    },
-
-    restApiSave : function(payload) {
-          var defer = $q.defer();
-          $http({
-                  method: 'POST',
-                  url: BACKEND_URI + 'adminApi.php',
-                  cache: false,
-                  dataType: "json",
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
-                  },
-                  data: payload
-              })
-              .then(function successCallback(response){
-                    defer.resolve(response.data);
-              },
-              function errorCallback(response) {
-                    defer.resolve(response.data);
-              });
-          return defer.promise;
-    },
-
-    restApiLoad : function() {
-          console.log("loading from db storage");
-          var defer = $q.defer();
-          $http({
-                  method: 'GET',
-                  url: BACKEND_URI + 'adminApi.php',
-                  cache: false,
-                  dataType: "json",
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
-                  }
-              })
-              .then(function successCallback(response){
-                    defer.resolve(response.data);
-              },
-              function errorCallback(response) {
-                    defer.resolve(response.data);
-              });
-          return defer.promise;
-    },
-
-    singleRestApiSave : function(payload) {
-          var defer = $q.defer();
-          $http({
-                  method: 'POST',
-                  url: BACKEND_URI + 'api.php',
-                  cache: false,
-                  dataType: "json",
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
-                  },
-                  data: payload
-              })
-              .then(function successCallback(response){
-                    defer.resolve(response.data);
-              },
-              function errorCallback(response) {
-                    defer.resolve(response.data);
-              });
-          return defer.promise;
-    },
-
-    singleRestApiLoad : function($uuid) {
-          console.log("loading from db storage");
-          var defer = $q.defer();
-          $http({
-                  method: 'GET',
-                  url: BACKEND_URI + 'api_v2.php/kanban/' + $uuid,
-                  cache: false,
-                  dataType: "json",
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
-                  }
-              })
-              .then(function successCallback(response){
-                    defer.resolve(response.data);
-              },
-              function errorCallback(response) {
-                    defer.resolve(response.data);
-              });
-          return defer.promise;
+    loadKanban : function($uuid){
+        return getFromBackend(BACKEND_URI + 'api_v2.php/kanban/' + $uuid);
     },
 
     restApiPoll : function(kanbanId) {
