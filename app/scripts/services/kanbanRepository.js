@@ -235,7 +235,7 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
           var defer = $q.defer();
           $http({
                   method: 'GET',
-                  url: BACKEND_URI + 'adminApi.php/servertimelastsave',
+                  url: BACKEND_URI + 'api_v2.php/poll/' + kanbanId,
                   cache: false,
                   dataType: "json",
                   headers: {

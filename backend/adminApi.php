@@ -49,7 +49,7 @@ class KanbanAPI {
         $result = $this->db->getOne ("kanban");
         if ($result) {
             $data = Array (
-            'json' => $json,
+            'json' => $json,   
             'timestamp' => $timestamp,
             'servertimestamp' => $servertimestamp,
             'browser' => $browser,
@@ -69,6 +69,9 @@ class KanbanAPI {
             unset($this->db->where);
             $insertData = Array (
                 'id' => $id,
+                'name' => '',
+                'numberOfColumns' => 0,    
+                'settings' => '',                 
                 'json' => $json,
                 'timestamp' => $timestamp,
                 'servertimestamp' => $servertimestamp,

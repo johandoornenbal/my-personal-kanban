@@ -105,7 +105,28 @@ class KanbanAPI {
     }
 
     function deletecard($json){
-        sendResponse(200, 'delete card called.. the following was received - '.$json);
+        
+        $cardToDelete = json_decode($json, false);
+        $this->db->where ("id", $cardToDelete->cardId);
+        $result = $this->db->delete('card');
+        if ($result) {
+            $event = "CARD_DELETE";
+            sendResponse(200, 'delete card called and executed.. the following was received - '.$json);
+        } else {
+            $event = "FAILING_CARD_DELETE";
+            sendResponse(400, 'ERROR deleting card .. the following was received - '.$json);
+        }
+        
+        /* update kanban with timestamp and event details */
+        $this->db->where ("id", $cardToDelete->kanbanId);
+        $update = Array (
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => $cardToDelete->browser,
+            'event' => $event,
+            'eventdetails' => $cardToDelete->id
+        );
+        $result = $this->db->update ("kanban", $update);
+        
     }
 
     function savecolumn($json){
@@ -233,73 +254,21 @@ class KanbanAPI {
     
     function getpoll($kanbanId) {
         $this->db->where ("id", $kanbanId);
-        $result = $this->db->getOne ("kanban");
-        $jsonObject = (object) array(
-                'servertimestamp' => $result['servertimestamp'],
-                'browser' => $result['browser'],
-                'event' => $result['event'],
-                'eventdetails' => $result['eventdetails']
-            );
-        $jsonResult = json_encode($jsonObject);
-        sendResponse(200, $jsonResult, 'application/json');
-        return true;
-    }    
-
-    function store($kanbanId, $json, $timestamp, $servertimestamp, $browser) {
-        if ($json == ''){
-            sendResponse(400, 'No valid Json received and stored');
+        if ($result = $this->db->getOne ("kanban")){
+            $jsonObject = (object) array(
+                    'servertimestamp' => $result['servertimestamp'],
+                    'browser' => $result['browser'],
+                    'event' => $result['event'],
+                    'eventdetails' => $result['eventdetails']
+                );
+            $jsonResult = json_encode($jsonObject);
+            sendResponse(200, $jsonResult, 'application/json');
+            return true;
+        } else {
+            sendResponse(400, "ERROR: kanban not found");
             return false;
         }
-        sendResponse(200, 'Json received ');
-        $data = Array (
-            'json' => $json,
-            'timestamp' => $timestamp,
-            'servertimestamp' => $servertimestamp,
-            'browser' => $browser
-        );
-        $this->db->where ('id', $kanbanId);
-        if ($this->db->update ('kanban', $data))
-            sendResponse(200, 'Single Json stored ');
-        else
-            sendResponse(400, 'ERROR: could not store Single json ');
-
-        $dataAll = Array (
-            'timestamp' => $timestamp,
-            'servertimestamp' => $servertimestamp,
-            'browser' => $browser
-        );
-        $this->db->where ('id', 1);
-        if ($this->db->update ('kanbanAll', $data))
-            sendResponse(200, 'server timestamp stored ');
-        else
-            sendResponse(400, 'ERROR: could not store server timestamp ');
-                
-        return true;
-    }
-
-    function load($id) {
-        $this->db->where ("id", $id);
-        $result = $this->db->getOne ("kanban");
-        $jsonObject = json_decode($result['json'], false);
-        $singleKanbanResult = $jsonObject;
-        // add servertimestamp to result to send back as response
-        $singleKanbanResult = (object) array_merge( (array)$singleKanbanResult, array( 'servertimestamp' => $result['servertimestamp'] ) );
-        $jsonResult = json_encode($singleKanbanResult);
-        sendResponse(200, $jsonResult, 'application/json');
-        return true;
-    }
-        
-    function servertimelastsave() {
-        $this->db->where ("id", 1);
-        $result = $this->db->getOne ("kanbanAll");
-        $jsonObject = (object) array(
-                'servertimestamp' => $result['servertimestamp'],
-                'browser' => $result['browser'],
-            );
-        $jsonResult = json_encode($jsonObject);
-        sendResponse(200, $jsonResult, 'application/json');
-        return true;
-    }
+    }    
             
 }
 
@@ -358,13 +327,9 @@ switch ($method) {
                 
                 switch ($requestEndPoint) {
 
-                case "servertimelastsave":
-                    $api->servertimelastsave();
-                break; 
-
-                default:
-                    $api->load($requestEndPoint);
-                break;
+                    default:
+                        sendResponse(400, 'ERROR: endpoint not known ');
+                    break;
 
                 }
 
