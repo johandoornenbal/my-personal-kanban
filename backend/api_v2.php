@@ -54,7 +54,12 @@ class KanbanAPI {
                 foreach($singleColumn->cards as $cardId){
                     $this->db->where ("id", $cardId);
                     $card_result = $this->db->getOne ("card");
-                    $cardsForExport[] = json_decode($card_result["json"]);
+                    /*filter some values in order to prevent perpetual change*/
+                    $cardObj = json_decode($card_result["json"]);
+                    unset($cardObj->browser);
+                    unset($cardObj->lastChange);
+                    unset($cardObj->kanbanId);
+                    $cardsForExport[] = $cardObj;
                 }
                 $columnsForExport[$i]->id = $singleColumn->id;
                 $columnsForExport[$i]->name = $singleColumn->name;

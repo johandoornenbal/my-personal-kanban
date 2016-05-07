@@ -88,6 +88,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                     console.log(data);
                 });
             $scope.allChangedCards.splice(0,1);
+            console.log($scope.allChangedCards);
         }
 
         var allColumnsToSave = $scope.allChangedColumns.slice();
@@ -280,9 +281,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         }
 
         $scope.reloading = false;
-
-        detectChangesInCards();
-        detectChangesInColumns();
 
     };
 
