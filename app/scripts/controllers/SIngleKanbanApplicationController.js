@@ -48,16 +48,44 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                     pollingService.setPauze(false);
                 });
             }
-            console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
-            console.log('change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
+//            console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
+//            console.log('change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
             poll();
-        }, 5000);
+        }, 1000);
     };
     poll();
+
+    var testLocking = function(){
+
+        kanbanRepository.getLock($scope.kanban.id).then(function(data){
+            console.log(data);
+            if (data == 'free'){
+               kanbanRepository.setLock($scope.kanban.id).then(function(data){
+                   console.log(data);
+               });
+            } else {
+                 kanbanRepository.unLock($scope.kanban.id).then(function(data){
+                     console.log(data);
+                 });
+            };
+        });
+
+        $timeout(function(){
+            testLocking();
+        }, 5000);
+
+    }
+    $timeout(function(){
+        testLocking();
+    }, 2000);
 
     var autosave = function(){
         $timeout(function(){
 //            console.log("start autosave");
+
+            kanbanRepository.getLock($scope.kanban.id).then(function(data){
+                console.log(data);
+            });
             if (!$scope.reloading && !$scope.connectionLost){
                 if ($scope.reloadNoSave) {
                     // skip this save
@@ -275,6 +303,11 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         }
 
         $scope.reloading = false;
+        $scope.noCardWatch = true; // do not watch right after (re-)loading -  no changes have to be persisted in backend
+        $scope.noColumnWatch = true; // do not watch right after (re-)loading -  no changes have to be persisted in backend
+
+        detectChangesInCards();
+        detectChangesInColumns();
 
     };
 

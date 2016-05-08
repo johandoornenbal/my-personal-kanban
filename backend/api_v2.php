@@ -434,7 +434,50 @@ class KanbanAPI {
             sendResponse(400, "ERROR: kanban not found");
             return false;
         }
-    }    
+    }
+    
+    function getlock($kanbanId){
+        $this->db->where ("kanban", $kanbanId);
+        if ($result = $this->db->getOne ("locking")){
+            $msg = Array(
+                "browser" => $result['master'],
+                "timestamp" => $result['timestamp']
+            );
+            sendResponse(200, json_encode($msg), 'application/json');
+        } else {
+            sendResponse(200, 'free');
+        }
+    }
+    
+    function setlock($json){
+        $lock = json_decode($json, false);
+        $this->db->where ("kanban", $lock->kanban);
+        if ($result = $this->db->get ("locking")){
+            sendResponse(400, 'ERROR setting lock .. lock already set - '.$json);
+        } else {
+            $insert = Array (
+                'kanban' => $lock->kanban,
+                'timestamp' => intval(microtime(true)*1000),
+                'master' => $lock->browser,
+            );
+            $result = $this->db->insert ("locking", $insert);
+            if ($result){
+                sendResponse(200, $lock->browser);
+            } else {
+                sendResponse(400, 'ERROR setting lock .. the following was received - '.$json);
+            }
+        }
+    }
+    
+    function setunlock($kanbanId){
+        $this->db->where ("kanban", $kanbanId);
+        $result = $this->db->delete ("locking");
+        if ($result){
+                sendResponse(200, "free");
+            } else {
+                sendResponse(400, 'ERROR unlocking lock .. the following was received - '.$kanbanId);
+        }
+    }
             
 }
 
@@ -487,6 +530,10 @@ switch ($method) {
             
             case "poll":
                 $api->getpoll($requestEndPoint);
+            break;
+                
+            case "lock":
+                $api->getlock($requestEndPoint);
             break;    
                 
             default:
@@ -539,7 +586,15 @@ switch ($method) {
 
             case "updatekanban":
                 $api->updatekanban($content);
-            break;    
+            break;
+                
+            case "lock":
+                $api->setlock($content);
+            break;
+                
+            case "unlock":
+                $api->setunlock($content);
+            break;      
                 
             default:
                 sendResponse(400, 'ERROR: endpoint not known ');
