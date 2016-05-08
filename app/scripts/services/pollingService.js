@@ -22,7 +22,7 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
                 } else {
                     console.log('pauzing polling ...');
                 }
-             }, 5000);
+             }, 3000);
 
              kanbanRepository.restApiPoll(kanbanId).then(function(data){
                 myTimeStamp = new Date().getTime();
