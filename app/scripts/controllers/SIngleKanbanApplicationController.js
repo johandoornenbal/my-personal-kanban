@@ -11,6 +11,11 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     $scope.allChangedCards = [];
     $scope.allChangedColumns = [];
 
+    $scope.freeToSave = false;
+    $scope.failedFreeAttempt = 0;
+    $scope.maxAttemptsBeforeSelfFree = 10;
+    $scope.somethingToSave = [];
+
     $scope.noCardWatch = true; // do not watch right after (re-)loading -  no changes have to be persisted in backend
     $scope.noColumnWatch = true; // do not watch right after (re-)loading -  no changes have to be persisted in backend
 
@@ -21,7 +26,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     $scope.reloading = false; /* flag to indicate that changes to scope are due to reloading after loading data from backend */
     $scope.reloadNoSave = false; /* flag set by pol() and unset by $scope.$watch to indicate that changes to scope are due to reloading and are not to be saved */
 
-	// <-------- Polling the pollingservice for backend for changes ---------------> //
+	// <-------- Checking the pollingservice for backend for changes ---------------> //
     var poll = function() {
         $timeout(function() {
             var time = new Date().getTime();
@@ -55,6 +60,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     };
     poll();
 
+/*
     var testLocking = function(){
 
         kanbanRepository.getLock($scope.kanban.id).then(function(data){
@@ -79,25 +85,97 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         testLocking();
     }, 2000);
 
+*/
+
     var autosave = function(){
         $timeout(function(){
-//            console.log("start autosave");
 
-            kanbanRepository.getLock($scope.kanban.id).then(function(data){
-                console.log(data);
-            });
-            if (!$scope.reloading && !$scope.connectionLost){
-                if ($scope.reloadNoSave) {
-                    // skip this save
-                    $scope.reloadNoSave = false;
-                } else {
-                    $scope.$broadcast("saveColumnsAndCards");
-                }
+            if ($scope.allChangedCards.length > 0) {
+                $scope.somethingToSave.push("card");
             }
+
+            if ($scope.allChangedColumns.length > 0) {
+                $scope.somethingToSave.push("column");
+            }
+
+            if ($scope.somethingToSave.length > 0){
+
+                // check lock
+                checkLock();
+
+
+
+            }
+            unLock();
+
             autosave();
         }, 1000);
     }
     autosave();
+
+    var checkLock = function(){
+                return kanbanRepository
+                    .getLock($scope.kanban.id)
+                    .then(function(data){
+                        console.log(data);
+                        if (data == 'free'){
+                            $scope.failedFreeAttempt = 0;
+                            $scope.freeToSave = true;
+                            pollingService.setPauze(true);
+                            setLock();
+                        } else {
+                            $scope.freeToSave = false;
+                            $scope.failedFreeAttempt ++;
+                        }
+                        console.log("free to save : " + $scope.freeToSave);
+                    });
+            }
+
+    var setLock = function(){
+                if ($scope.freeToSave){
+                    return kanbanRepository
+                     .setLock($scope.kanban.id)
+                     .then(function(data){
+                         console.log(data);
+                         if (data == kanbanRepository.browser){
+                            $scope.lockset = true;
+                            saveAll();
+                         } else {
+                            $scope.lockset = false;
+                         }
+                         console.log("lock set : " + $scope.lockset);
+                     });
+                } else { return null;}
+    }
+
+
+    var unLock = function(){
+                 if (($scope.freeToSave && $scope.lockset) || $scope.failedFreeAttempt > $scope.maxAttemptsBeforeSelfFree){
+                     $scope.failedFreeAttempt = 0;
+                     return kanbanRepository
+                          .unLock($scope.kanban.id)
+                          .then(function(data){
+
+                              $scope.freeToSave = false;
+                              $scope.lockset = false;
+                              pollingService.setPauze(false);
+
+                              console.log("unlock done " + data);
+                              console.log($scope.freeToSave);
+                              console.log($scope.lockset);
+                          });
+                 } else { return null;}
+     }
+
+
+
+    var saveAll = function(){
+
+        console.log("saving ..." + $scope.somethingToSave);
+        $scope.$broadcast('saveColumnsAndCards');
+        $scope.somethingToSave = [];
+
+    }
 
     // <-------- Backend saving events ---------------> //
     /*
@@ -308,6 +386,11 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
         detectChangesInCards();
         detectChangesInColumns();
+
+        $timeout(function() {
+            $scope.noCardWatch = false;
+            $scope.noColumnWatch = false;
+        }, 1000);
 
     };
 

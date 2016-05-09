@@ -17,23 +17,32 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
       return {
           poll:  poll = function(kanbanId) {
              $timeout(function() {
+
                 if (!pauze){
-                    poll(kanbanId);
+
+                    console.log('polling ...');
+                     kanbanRepository.restApiPoll(kanbanId).then(function(data){
+                        myTimeStamp = new Date().getTime();
+                        previousPolledTimeStamp = polledTimeStamp;
+                        polledTimeStamp = data.servertimestamp;
+                        polledBrowser = data.browser;
+                        if (polledTimeStamp > previousPolledTimeStamp && polledBrowser != kanbanRepository.browser){
+                            change = true;
+                            polledTimeStampChange = polledTimeStamp;
+                        }
+                     });
+
                 } else {
+
                     console.log('pauzing polling ...');
+
                 }
+
+                poll(kanbanId);
+
              }, 3000);
 
-             kanbanRepository.restApiPoll(kanbanId).then(function(data){
-                myTimeStamp = new Date().getTime();
-                previousPolledTimeStamp = polledTimeStamp;
-                polledTimeStamp = data.servertimestamp;
-                polledBrowser = data.browser;
-                if (polledTimeStamp > previousPolledTimeStamp && polledBrowser != kanbanRepository.browser){
-                    change = true;
-                    polledTimeStampChange = polledTimeStamp;
-                }
-             });
+
           },
           getChange : function(){ return change;},
           setNoChange : function(){ change = false; },
