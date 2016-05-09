@@ -16,6 +16,19 @@ class KanbanAPI {
     function __destruct() {
         $this->db->close();
     }
+
+    function allkanbans(){
+
+        $result = $this->db->get ("kanban");
+        $obj = Array();
+        foreach($result as $r){
+            $obj[] = Array(
+                "name" => $r['name'],
+                "id" => $r['id']
+            );
+        }
+        sendResponse(200, json_encode($obj));
+    }
     
         
     function getkanban($kanbanId){   
@@ -539,6 +552,10 @@ switch ($method) {
             default:
                 
                 switch ($requestEndPoint) {
+
+                    case "allkanbans":
+                        $api->allkanbans();
+                    break;
 
                     default:
                         sendResponse(400, 'ERROR: endpoint not known ');

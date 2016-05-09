@@ -38,28 +38,67 @@
         <div class="navbar-inner">
             <div class="container">
                 <!--KANBAN MENU -->
-                <div class="navbar-header col-md-3">
-                    <span id="kanbanName" class="navbar-brand" ng-model="kanban" ng-hide="editingName">{{kanban.name}}</span>
+                <div class="navbar-header col-md-8">
+                    <span id="kanbanName" class="navbar-brand" ng-model="kanban" ng-hide="editingName"><a class="renameKanban" ng-click="editingKanbanName()">{{kanban.name}}</a></span>
+                    <div ng-show="editingName" class="pull-left">
+                        <form ng-submit="rename()">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <a ng-click="editingName=false"><i class="glyphicon glyphicon-tasks"></i></a>
+                                </span>
+                                <input type="text" name="kanbanName" ng-model="newName" class="form-control"/>
+                            </div>
+                        </form>
+                    </div>
+                    <span class="small"><a href="../kanban/#/kanban/{{kanban.id}}" target="_blank">{{ 'USER_KANBAN_LINK' | translate}}: {{kanban.id}}</a></span>
                 </div>
                 <!--KANBAN MENU -->
-                <div class="col-md-9">
+                <div class="col-md-4">
                     <ul class="nav navbar-nav pull-right" id="menu">
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown">Kanban<span class="caret"></span></a>
                             <ul class="dropdown-menu">
+                                <li><a class="mpkNew" title="New Kanban board" ng-click="kanbanMenu.openNewKanban()"><i class="glyphicon glyphicon-briefcase"></i> {{ 'NEW' | translate }}</a>
+                                </li>
+                                <li><a title="Delete Kanban from local storage" ng-click="kanbanMenu.delete()"><i class="glyphicon glyphicon-remove-sign"></i> {{ 'DELETE' | translate }}</a></li>
                                 <li><a title="Select Theme for the Kanban board" ng-click="kanbanMenu.openSwitchTheme()"><i class="glyphicon glyphicon-picture"></i> {{ 'THEMES' | translate }}</a></li>
                                 <li><a title="Open archive" ng-click="kanbanMenu.openArchive(kanban)"><i class="glyphicon glyphicon-folder-open"></i> {{ 'ARCHIVES' | translate }}</a></li>
                                 <li><a title="Open archive" ng-click="kanbanMenu.openUsers(kanban)"><i class="glyphicon glyphicon-user"></i> {{ 'USERS' | translate }}</a></li>
                                 <li role="presentation" class="divider"></li>
-                                <li><a title="Help" ng-click="showHelp=true" href=""><i class="glyphicon glyphicon-question-sign"></i> {{ 'HELP' | translate }}</a></li>
+                                <li><a title="Export Kanban to file" ng-click="kanbanMenu.openExport(allKanbans, kanban.name)" href=""><i class="glyphicon glyphicon-save"></i> {{ 'EXPORT' | translate }}</a></li>
+                                <li><a title="Import Kanban from file" ng-click="kanbanMenu.openImport()" href=""><i class="glyphicon glyphicon-open"></i> {{ 'IMPORT' | translate }}</a></li>
+                                <!--<li role="presentation" class="divider"></li>-->
+                                <!--<li><a title="Help" ng-click="showHelp=true" href=""><i class="glyphicon glyphicon-question-sign"></i> Help</a></li>-->
                             </ul>
                         </li>
                     </ul>
+
+                    <!--
+                    <ul class="nav navbar-nav pull-right" id="cloudMenu">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">Cloud <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a ng-click="cloudMenu.openCloudSetup()" href=""><i class="glyphicon glyphicon-wrench"></i> Setup</a></li>
+                                <li><a ng-click="cloudMenu.upload()" href=""><i class="glyphicon glyphicon-upload"></i> Upload</a></li>
+                                <li><a ng-click="cloudMenu.download()" href=""><i class="glyphicon glyphicon-download"></i> Download</a></li>
+                                <li><a href="http://localhost:8080/" target="blank"><i class="glyphicon glyphicon-hand-right"></i> Go to Cloud</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    -->
 
                     <div id="info" class="nav pull-right" ng-show="showInfo">
                         <span id="error" class="error" ng-show="showError"><a ng-click="showInfo=false;showError=false;errorMessage=''">{{errorMessage}}</a></span>
                         <span id="message" class="">{{infoMessage}}</span>
                         <span id="spinner" class="pull-right" spin="spinConfig" spin-if="showSpinner"></span>
+                    </div>
+
+                    <div id="quickSwitch" class="pull-right form-group">
+                        <form>
+                            <select ng-model="switchTo" ng-options="name for name in switchToList" ng-change="switchToKanban(switchTo)">
+                                <option>{{ 'SWITCH_TO' | translate }}</option>
+                            </select>
+                        </form>
                     </div>
 
                 </div>
@@ -68,6 +107,7 @@
     </header>
 
     <div class="container-fluid" id="kanban" ng-controller="KanbanController">
+
         <div id="column-container">
             <div id="columns">
 
@@ -90,9 +130,11 @@
                                 <br/>
                                 <span class="pull-right" ng-show="card.owner"><i class="h5" style="border: solid 4px {{card.owner.color}}; padding: 2px; margin-top: 10px; margin-right: 5px;">{{card.owner.initials}}</i></span>
                                 <br/>
+
                             </li>
                         </ul>
                     </div>
+
                 </div>
 
             </div>
@@ -274,40 +316,79 @@
 
     </div>
 
-    <!-- THIS IS THE HELP -->
-    <mpk-modal title="{{ 'HELP' | translate }}" visible="showHelp" modal-style="width:90%">
-        <p><span class="version">My Team Kanban Version: @version@</span> <a href="http://github.com/johandoornenbal/my-team-kanban" target="blank">http://github.com/johandoornenbal/my-team-kanban</a><br/>
-            <small>forked from 'My Personal Kanban' by Greg Gigon<a href="http://greggigon.github.io/my-personal-kanban/" target="blank">http://greggigon.github.io/my-personal-kanban/</a></small>
-        </p>
-        <p>
-            <strong>{{'TEAM_KANBAN' | translate}}</strong><br/>
-            <small>
-                <strong>{{'CARDS' | translate}}</strong><br/>
-                <strong>Kaarten maken</strong><br/>
-                Je kunt een nieuwe kaart aan een kolom toevoegen door op de + te klikken rechtsboven in de kolom.<br/>
-                Kaarten worden gemaakt met een titel, optioneel een langere beschrijving en optioneel een kaart eigenaar.<br/>
-                Ook kun je kaarten een kleur geven om ze te categoriseren als dat gewenst is.<br/>
-                Wanneer je een link naar een website in de omschrijving zet wordt deze vanzelf 'aanklikbaar' gemaakt.<br/><br/>
-                <strong>Kaarten bewerken</strong><br/>
-                Je kunt een kaart openen door op de titel te klikken. Daarna kun je de kaart bewerken.<br/>
-                Vergeet niet het vinkje te klikken na de bewerking om de wijzigingen goed door te voeren.<br/><br/>
-                <strong>Kaarten verwijderen</strong> doe je door de <strong>X</strong> rechtsboven op de kaart te klikken<br/><br/>
-                <strong>Direct een eigenaar toekennen</strong> doe je door de <i class="glyphicon glyphicon-user"></i> te klikken<br/>
-                Voorwaarde is wel dat er minimaal een gebruiker is aangemaakt voor de Kanban<br/><br/>
-                <strong>Kaarten verplaatsen</strong> doe je door ze te verslepen binnen of tussen de kolommen<br/><br/>
-                <strong>Archiveren</strong><br/>
-                Alleen in de laatste kolom kun je een kaart archiveren door <i class="glyphicon glyphicon-folder-close"></i> te klikken.<br/>
-                Het archief kun je bekijken door in het menu 'Kanban' archief te kiezen. Kaarten kunnen van daaruit worden teruggezet op het bord.<br/>
-                <br/><strong>{{'COLUMNS' | translate}}</strong><br/>
-                <strong>Bewerken, toevoegen en verwijderen</strong><br/>
-                Klik op de <i class="glyphicon glyphicon-wrench"></i> om een kolom te bewerken. De titel, kleur en het maximaal aantal kaarten kun je aanpassen.<br/>
-                Weer voorzichtig met het <strong>verwijderen</strong> van een kolom: alle kaarten in de kolom gaan dan ook verloren. Daarom krijg je even bedenktijd voordat je kunt bevestigen.<br/>
-                Een nieuwe kolom kun je links of rechts <strong>toevoegen</strong> indien gewenst.<br/>
-                <br/><strong>Nieuwe gebruikers kun je toevoegen en verwijderen vanuit het Kanban menu 'Gebruikers'</strong><br/>
-                Geef iedere gebruiker initialen en een kleur voor de herkenbaarheid op de kaart - de kaart eigenaar is dan duidelijk voor iedereen.
+    <!-- NEW KANBAN MODAL -->
+    <div ng-controller="NewKanbanController">
+        <mpk-modal title="NEW_KANBAN_BOARD" visible="showNewKanban">
+            <form class="noMargin" name="newKanbanForm">
+                <div class="form-group">
+                    <label class="control-label" for="kanbanNameFormField">{{ 'KANBAN_NAME' | translate }}</label>
+                    <div>
+                        <input type="text" id="kanbanNameFormField" placeholder="Kanban name" class="form-control" ng-model="model.kanbanName" required focus-me/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="numberOfColumnsField">{{ 'NUMBER_COLUMNS' | translate }}</label>
+                    <div>
+                        <select id="numberOfColumnsField" ng-model="model.numberOfColumns" class="form-control" ng-options="number for number in [2,3,4,5,6,7,8,9]">
+                        </select>
+                    </div>
+                </div>
+                <hr/>
+                <div class="form-group">
+                    <label for="fromTemplate">{{ 'USE_TEMPLATE' | translate }}</label>
+                    <div>
+                        <select id="fromTemplate" name="fromTemplate" ng-model="model.useTemplate" ng-options="name for name in model.kanbanNames" class="form-control">
+                            <option>{{ 'EXISTING_KANBANS' | translate }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="alert alert-info">
 
+                    <p>{{ 'WHEN_USING_HELP' | translate }} <strong>{{ 'NUMBER_COLUMNS' | translate }}</strong> {{ 'AND_RESPECTIVE' | translate }} <strong>{{ 'NAMES' | translate }}</strong> {{ 'WILL_BE_USED' | translate }}.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
+                    <button type="submit" class="btn btn-primary" ng-click="createNew()">{{ 'CREATE_NEW' | translate }}</button>
+                </div>
+            </form>
+        </mpk-modal>
+    </div>
+
+    <!-- THIS IS THE HELP -->
+    <mpk-modal title="Help" visible="showHelp" modal-style="width:90%">
+        <p><span class="version">My Personal Kanban Version: @version@</span> from <a href="http://greggigon.github.io/my-personal-kanban/" target="blank">http://greggigon.github.io/my-personal-kanban/</a></p>
+        <p>
+            <strong>Personal Kanban</strong><br/>
+            <small>You can create <strong>new Kanban</strong> by selecting <strong>Kanban -> New</strong> from the Kanban menu. You can give it a name and select number of columns. You can also choose existing Kanban as a template for the new one.<br/>
+                Once Kanban is created you can <strong>rename</strong> it by <strong>clicking it's title</strong> in the top bar. You can add new cards to the columns by pressing <strong>&plus;</strong> in the top right of the column. <br/>
+                You can give each <strong>column name</strong> and change it's colour by selecting <strong>Column settings icon</strong> next to it's name. <strong>(Number)</strong> next to column name indicates number of cards in the column.<br/><br/>
+                <strong>Cards are created</strong> with <strong>title</strong> and possible longer <strong>description</strong>. You can also <strong>select different colour</strong> for the card if you would like to categorize them somehow. Description will <strong>keep the new line
+                    formating</strong> and add <strong>clickable links</strong> if you include any. <br/>
+                You can <strong>open Card details</strong> by clicking on <strong>card title</strong>.You can <strong>edit Card details</strong> once opened.<br/>
+                You can <strong>drag card between columns</strong> and move them <strong>up and down</strong> column list.<br/><br/>
+                You can have <strong>multiple Kanbans</strong> and open/switch them from the <strong>Switch to ...</strong> dropdown, next to <strong>Cloud Menu</strong>. <br/>
+                You can <strong>select different style</strong> of Kanban board from <strong>Kanban -> Theme</strong> menu.<br/>
+                You can <strong>delete</strong> entire Kanban by selecting <strong>Kanban -> Delete</strong> from the menu.<br/>
+                Your Kanbans are automatically <strong>saved</strong> in your <strong>browser storage</strong>. <br/><br/>
+                If card is in the last colum you can Archive it. It will remove it from a Column but keep in Kanban. You can review
+                your archived Cards via <strong>Kanban -> Archives</strong> menu. <br/>
+                You can also un-archive cards from Archive and permamently remove them.<br/><br/>
+                You can <strong>Export</strong> one or all Kanbans by selecting <strong>Kanban -> Export</strong> menu.<br/>
+                You can <strong>Import</strong> Kanban(s) from a JSON file. <strong>Not that Kanban with existing name, same as imported one will be replaced with the content of the new one.</strong><br/><br/>
             </small>
         </p>
+        <!--<p>-->
+            <!--<strong>Cloud</strong><br/>-->
+            <!--<small>-->
+                <!--You can use <strong>My Personal Kanban Cloud</strong> service that enables <strong>Upload and Download</strong> from Cloud. This service is offered free of charge. <br/>-->
+                <!--You will need to create your <strong>cloud Kanban key</strong>. Follow instructions on <strong>Cloud -> Setup</strong>.<br/>-->
+                <!--Your Kanban in the Cloud <strong>is stored Encrypted</strong>, that's why you should setup <strong>Encryption Key</strong>. The Encryption algorithm is <a href="http://en.wikipedia.org/wiki/Rabbit_(cipher)" target="blank" title="Rabbit encryption algorithm">Rabbit</a>.<br/>-->
+                <!--You can <strong>upload Kanban</strong> by selecting <strong>Cloud -> Upload</strong> from the menu <br/>.-->
+                <!--You can <strong>download Kanban</strong> by selecting <strong>Cloud -> Download</strong> from the menu. <br/><br/>-->
+                <!--You can also use your own Local Cloud. There is server implementation provided at: <a href="https://github.com/greggigon/my-personal-kanban-server" target="blank">https://github.com/greggigon/my-personal-kanban-server</a>. Just select the option and provide URL for the Local Cloud-->
+                <!--service <strong>Cloud -> Setup -> Use own Local Cloud</strong>.-->
+            <!--</small>-->
+        <!--</p>-->
     </mpk-modal>
 
     <!-- SWITCH THEME MODAL -->
@@ -372,6 +453,51 @@
         </mpk-modal>
     </div>
 
+    <!-- EXPORT MODAL -->
+    <div ng-controller="ExportController">
+        <mpk-modal visible="showExportModal" title="EXPORT_KANBAN">
+            <form name="exportKanban" class="noMargin">
+                <div class="form-group">
+                    <label class="control-label" for="kanbanToExport">{{ 'TO_EXPORT' | translate }}:</label>
+                    <div>
+                        <select id="kanbanToExport" ng-model="model.selectedKanban" class="form-control"
+                                ng-options="name for name in model.allKanbanNames" ng-disabled="model.exportAll">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="model.exportAll"> {{ 'EXPORT_ALL_KANBANS' | translate }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
+                    <button class="btn btn-primary" type="submit" ng-click="doExport()">{{ 'EXPORT' | translate }}</button>
+                </div>
+            </form>
+        </mpk-modal>
+    </div>
+
+    <!-- IMPORT MODAL -->
+    <div ng-controller="ImportController">
+        <mpk-modal visible="showImportModal" title="IMPORT_KANBAN_FROM_FILE">
+            <form name="importKanban" class="noMargin">
+                <div class="form-group">
+                    <label class="control-label" for="kanbanToExport">{{ 'SELECT_FILE' | translate }}:</label>
+                    <input type="file" id="kanbanFile" name="kanbanFile" read-file ng-model="model.file" ng-change="model.fileSelected=true"/>
+                </div>
+                <div class="alert alert-warning">{{ 'IMPORT_WARNING' | translate }}</div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">{{ 'CLOSE' | translate }}</button>
+                    <button class="btn btn-primary" type="submit" ng-click="import()" ng-disabled="model.file==''">{{ 'IMPORT' | translate }}</button>
+                </div>
+            </form>
+        </mpk-modal>
+    </div>
 
     <!-- MANAGE USERS MODAL -->
     <div ng-controller="KanbanController">
@@ -401,6 +527,74 @@
         </mpk-modal>
     </div>
 
+    <!-- Cloud stuff from here -->
+    <!--
+    <div ng-controller="SetupCloudController">
+        <mpk-modal title="Cloud Setup" visible="showCloudSetup">
+            <form ng-submit="saveSettings()" name="cloudSettings" class="noMargin">
+                <div class="alert alert-danger" ng-show="model.showConfigurationError">
+                    <p>In order to use Cloud Upload and Download functionality, you need to generate Kanban Key, a unique identifier that will be used to upload and download your Kanban. You can to that at My Personal Kanban web service <a href="http://my-personal-kanban.appspot.com" target="blank">http://my-personal-kanban.appspot.com</a>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="kanbanKey">Kanban key:</label>
+                    <div>
+                        <input type="text" name="kanbanKey" id="kanbanKey" ng-model="model.kanbanKey" required class="kanbanKey form-control" placeholder="Cloud Kanban key" valid-key/>
+                        <span class="text-danger" ng-show="cloudSettings.kanbanKey.$error.validKey">Provided key is invalid</span>
+                        <span class="text-danger" ng-show="cloudSettings.kanbanKey.$error.validKeyUnableToVerify">Unable to validate key. You might not be connected to the Internet or Network or unable to access <a href="http://my-personal-kanban.appspot.com" target="blank"
+                                                                                                                                                                                                                       ng-hide="model.useLocalCloud">http://my-personal-kanban.appspot.com</a> <a
+                                href="model.localCloudUrl">{{model.localCloudUrl}}</a></span>
+
+                    </div>
+                </div>
+                <div class="alert alert-info" ng-hide="model.showConfigurationError || model.useLocalCloud">
+                    <p>If you need to retrieve your kanban key or generate a new one go to <a href="http://my-personal-kanban.appspot.com" target="blank">http://my-personal-kanban.appspot.com</a></p>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="cloudEncryptionKey">Cloud encryption key:</label>
+                    <div>
+                        <input type="text" name="cloudEncryptionKey" id="cloudEncryptionKey" class="kanbanKey form-control" ng-model="model.encryptionKey"/>
+                    </div>
+                </div>
+                <div class="alert alert-info">
+                    <p>This key will be used to Encrypt your Kanban when uploading into Cloud and Decrypt when downloading. It can be any number of characters.</p>
+                    <p>
+                        <small>If you make changes to this key, make sure to download latest Kanban from Cloud first and upload after.</small>
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Local Cloud:</label>
+                    <div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="model.useLocalCloud"> Use own Local Cloud
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-show="model.useLocalCloud">
+                    <label class="control-label" for="localCloudUrl">Local Cloud URL:</label>
+                    <div>
+                        <input type="text" name="localCloudUrl" id="localCloudUrl" class="form-control" ng-model="model.localCloudUrl" ng-required="model.useLocalCloud"/>
+                    </div>
+                </div>
+                <div class="alert alert-info" ng-show="model.useLocalCloud">
+                    <p>
+                        <small>You need to specify a valid URL for your Local Cloud service. Please provide hostname with port only (eg. http://localhost:8080). If the URL is valid your Kanban key should validate when you save Cloud settings.</small>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal" ng-click="stopSelfChange()">Close</button>
+                    <button class="btn btn-primary" type="submit" ng-disabled="cloudSettings.kanbanKey.$error.validKey">Save settings</button>
+                </div>
+
+            </form>
+        </mpk-modal>
+    </div>
+    -->
+
 </script>
 <footer></footer>
 
@@ -425,7 +619,7 @@
 <script src="scripts/enc-utf16-min.js"></script>
 
 <script src="scripts/model.js"></script>
-<script src="scripts/singleKanbanApp.js"></script>
+<script src="scripts/app.js"></script>
 <script src="scripts/services/cloudService.js"></script>
 <script src="scripts/services/uuidService.js"></script>
 <script src="scripts/services/kanbanRepository.js"></script>
@@ -434,12 +628,16 @@
 <script src="scripts/services/themesProvider.js"></script>
 <script src="scripts/services/fileService.js"></script>
 
-<script src="scripts/controllers/SingleKanbanApplicationController.js"></script>
+<script src="scripts/controllers/ApplicationController.js"></script>
+<script src="scripts/controllers/NewKanbanController.js"></script>
 <script src="scripts/controllers/CardController.js"></script>
 <script src="scripts/controllers/ColumnSettingsController.js"></script>
 <script src="scripts/controllers/NewKanbanCardController.js"></script>
 <script src="scripts/controllers/KanbanController.js"></script>
 <script src="scripts/controllers/SwitchThemeController.js"></script>
+<script src="scripts/controllers/SetupCloudController.js"></script>
+<script src="scripts/controllers/ExportController.js"></script>
+<script src="scripts/controllers/ImportController.js"></script>
 <script src="scripts/controllers/ArchiveController.js"></script>
 <script src="scripts/controllers/TranslateController.js"></script>
 
@@ -453,6 +651,7 @@
 <script src="scripts/filters/archiveByCardName.js"></script>
 <script src="scripts/services/cryptoService.js"></script>
 <script src="scripts/directives/spin.js"></script>
+<script src="scripts/directives/validKey.js"></script>
 <!-- endbuild -->
 </body>
 </html>

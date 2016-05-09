@@ -25,6 +25,7 @@ angular.module('mpk').factory('pollingService', function(kanbanRepository, $time
                         myTimeStamp = new Date().getTime();
                         previousPolledTimeStamp = polledTimeStamp;
                         polledTimeStamp = data.servertimestamp;
+                        console.log(polledTimeStamp);
                         polledBrowser = data.browser;
                         if (polledTimeStamp > previousPolledTimeStamp && polledBrowser != kanbanRepository.browser){
                             change = true;

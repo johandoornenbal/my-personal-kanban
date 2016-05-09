@@ -5,12 +5,8 @@ var mpkModule = angular.module('mpk', ['ngSanitize', 'ngRoute', 'angularSpectrum
 mpkModule.config(function($routeProvider, $locationProvider, $translateProvider) {
 	$routeProvider
 	  	.when('/kanban', {
-			templateUrl: 'kanban.html',
-		    controller: 'ApplicationController'
-		})
-		.when('/kanban/:kanbanName', {
-			templateUrl: 'kanban.html',
-			controller: 'ApplicationController'
+			templateUrl: 'kanbanAdmin.html',
+		    controller: 'AdminApplicationController'
 		})
 		.otherwise({
 			redirectTo: '/kanban'

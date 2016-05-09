@@ -3,6 +3,7 @@
 angular.module('mpk').factory('kanbanRepository', function (cloudService, cryptoService, $http, $q, uuidService) {
 
      var BACKEND_URI = 'http://localhost:8888/my-personal-kanban/backend/';
+
      // set id for the browser session
 
      var browser = uuidService.generateUUID();
@@ -139,25 +140,12 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
         return getFromBackend(BACKEND_URI + 'api_v2.php/kanban/' + $uuid);
     },
 
+    loadAllKanbans: function(){
+          return getFromBackend(BACKEND_URI + 'api_v2.php/allkanbans');
+    },
+
     restApiPoll : function(kanbanId) {
-          // console.log("Polling backend for kanban with id " + kanbanId + " and browser with id " + browser);
-          var defer = $q.defer();
-          $http({
-                  method: 'GET',
-                  url: BACKEND_URI + 'api_v2.php/poll/' + kanbanId,
-                  cache: false,
-                  dataType: "json",
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded' //BELANGRIJK VOOR REST ENDPOINT!!!! Yodo
-                  }
-              })
-              .then(function successCallback(response){
-                    defer.resolve(response.data);
-              },
-              function errorCallback(response) {
-                    defer.resolve(response.data);
-              });
-          return defer.promise;
+          return getFromBackend(BACKEND_URI + 'api_v2.php/poll/' + kanbanId);
     },
 
     getLock : function(kanbanId){
