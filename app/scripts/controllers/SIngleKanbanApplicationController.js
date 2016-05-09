@@ -3,6 +3,15 @@
 angular.module('mpk').controller('SingleKanbanApplicationController',
 	function ApplicationController($scope, $window, kanbanRepository, pollingService, themesProvider, $routeParams, $location, cloudService, $translate, $timeout, uuidService) {
 
+    /* SETTINGS */
+    $scope.maxAttemptsBeforeSelfFree = 10;
+    $scope.checkForBackendChangesTime = 1000;
+    $scope.autoSaveTime = 1000;
+    $scope.connectionLostTime = 10000;
+    $scope.timeBeforeWatchingAndPolling = 1000;
+
+    /* END SETTINGS */
+
 
     $scope.allCards = [];
     $scope.allColumns = [];
@@ -13,7 +22,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
 
     $scope.freeToSave = false;
     $scope.failedFreeAttempt = 0;
-    $scope.maxAttemptsBeforeSelfFree = 10;
     $scope.somethingToSave = [];
 
     $scope.noCardWatch = true; // do not watch right after (re-)loading -  no changes have to be persisted in backend
@@ -27,10 +35,10 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
     $scope.reloadNoSave = false; /* flag set by pol() and unset by $scope.$watch to indicate that changes to scope are due to reloading and are not to be saved */
 
 	// <-------- Checking the pollingservice for backend for changes ---------------> //
-    var poll = function() {
+    var checkForBackendChanges = function() {
         $timeout(function() {
             var time = new Date().getTime();
-            if (time > pollingService.getMyTimeStamp() + 10000){
+            if (time > pollingService.getMyTimeStamp() + $scope.connectionLostTime){
             	$scope.$broadcast("connectionLost");
             	$scope.connectionLost = true;
             } else {
@@ -55,10 +63,10 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             }
 //            console.log('lastchange: ' + $scope.timeStampLastSave + ' serverTimeStamp: ' + pollingService.getPolledTimeStampChange());
 //            console.log('change=' + pollingService.getChange() + " selfChange=" + pollingService.getSelfChangeInProgress());
-            poll();
-        }, 1000);
+            checkForBackendChanges();
+        }, $scope.checkForBackendChangesTime);
     };
-    poll();
+    checkForBackendChanges();
 
 /*
     var testLocking = function(){
@@ -91,29 +99,27 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         $timeout(function(){
 
             if ($scope.allChangedCards.length > 0) {
-                $scope.somethingToSave.push("card");
+                $scope.somethingToSave.push("cardAndColumns");
             }
 
             if ($scope.allChangedColumns.length > 0) {
-                $scope.somethingToSave.push("column");
+                $scope.somethingToSave.push("cardAndColumns");
             }
 
             if ($scope.somethingToSave.length > 0){
 
-                // check lock
-                checkLock();
-
-
+                attemptSave();
 
             }
             unLock();
 
             autosave();
-        }, 1000);
+
+        }, $scope.autoSaveTime);
     }
     autosave();
 
-    var checkLock = function(){
+    var attemptSave = function(){
                 return kanbanRepository
                     .getLock($scope.kanban.id)
                     .then(function(data){
@@ -161,8 +167,6 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                               pollingService.setPauze(false);
 
                               console.log("unlock done " + data);
-                              console.log($scope.freeToSave);
-                              console.log($scope.lockset);
                           });
                  } else { return null;}
      }
@@ -216,6 +220,13 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                 });
             $scope.allChangedColumns.splice(0,1);
         }
+    });
+
+    $scope.$on('ColumnAdded', function(){
+            kanbanRepository.updateKanban($scope.kanban).then(
+                function(data){
+                    console.log(data);
+                });
     });
 
     $scope.$on('cardDeleted', function(e, cardId){
@@ -276,18 +287,11 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
                 $scope.showError = false;
                 $timeout(function() {
                     $scope.showInfo = false;
-                }, 10000);
+                }, $scope.connectionLostTime);
         });
     });
 
     // <-------- Kanban changed actions ---------------> //
-
-	$scope.$on('ColumnAdded', function(){
-	        kanbanRepository.updateKanban($scope.kanban).then(
-                function(data){
-                    console.log(data);
-                });
-    });
 
 	$scope.$on('ColumnsChanged', function(){
 		$scope.columnWidth = calculateColumnWidth($scope.kanban.columns.length);
@@ -357,7 +361,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
             pollingService.poll($scope.kanban.id);
             $scope.noCardWatch = false;
             $scope.noColumnWatch = false;
-        }, 1000);
+        }, $scope.timeBeforeWatchingAndPolling);
 
         detectChangesInCards();
         detectChangesInColumns();
@@ -390,7 +394,7 @@ angular.module('mpk').controller('SingleKanbanApplicationController',
         $timeout(function() {
             $scope.noCardWatch = false;
             $scope.noColumnWatch = false;
-        }, 1000);
+        }, $scope.timeBeforeWatchingAndPolling);
 
     };
 
