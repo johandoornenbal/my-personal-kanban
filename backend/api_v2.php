@@ -104,6 +104,60 @@ class KanbanAPI {
         }
     }
 
+    function createkanban($json){
+        
+        if ($json == ''){
+            sendResponse(400, 'No valid Json received');
+            return false;
+        }
+        
+        $kanbanObj = json_decode($json, false);
+        
+        if ($kanbanObj->kanbanId == ''){
+            sendResponse(400, 'No valid kanban id received');
+            return false;
+        }
+        
+        if ($kanbanObj->name == ''){
+            sendResponse(400, 'No valid name received');
+            return false;
+        }
+        
+        if ($kanbanObj->numberOfColumns < 1){
+            sendResponse(400, 'No valid numberOfColumns received');
+            return false;
+        }
+        
+        $this->db->where ("id", $kanbanObj->kanbanId);
+        $result = $this->db->getOne('kanban');
+        
+        if ($result){
+            sendResponse(400, 'Kanban with id '.$kanbanObj->kanbanId.' already exists');
+            return false;   
+        }
+        
+        $insertData = Array (
+            'id' => $kanbanObj->kanbanId,
+            'name' => $kanbanObj->name,
+            'numberOfColumns' => $kanbanObj->numberOfColumns,
+            'columns' => '',
+            'settings' => '', //todo: settings dummy for the moment
+            'json' => '',
+            'servertimestamp' => intval(microtime(true)*1000),
+            'browser' => '',
+            'event' => "KANBAN_CREATE",
+            'eventdetails' => $kanbanObj->kanbanId
+        );
+        if ($this->db->insert ('kanban', $insertData)) {
+            $event = "KANBAN_CREATE";
+            sendResponse(200, 'Kanban created ');
+        } else {
+            $event = "FAILED_KANBAN_CREATE";
+            sendResponse(400, 'ERROR: could not create kanban ');
+        }
+
+    }
+
     function savecard($json){
         
         if ($json == ''){
@@ -572,6 +626,10 @@ switch ($method) {
     case "POST":
 
         switch ($requestEndPoint) {
+                
+            case "createkanban":
+                $api->createkanban($content);
+            break;    
 
             case "savecard":
                 $api->savecard($content);
