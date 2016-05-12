@@ -3,9 +3,15 @@
 angular.module('mpk').controller('AdminApplicationController',
 	function AdminApplicationController($scope, $window, kanbanRepository, $routeParams, $location, $translate) {
 
-	$scope.$on('NewKanbanAdded', function(){
+    $scope.newKanbanName = '';
 
-	});
+	$scope.createKanban = function (){
+        kanbanRepository.createKanban($scope.newKanbanName).then(
+            function(data){
+                console.log(data);
+            }
+        );
+	};
 
 	$scope.kanbanMenu = {};
 

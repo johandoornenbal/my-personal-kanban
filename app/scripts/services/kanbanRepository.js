@@ -168,6 +168,28 @@ angular.module('mpk').factory('kanbanRepository', function (cloudService, crypto
         return getFromBackend(BACKEND_URI + 'api_v2.php/card/' + cardId);
     },
 
+    createKanban : function(name){
+
+	    var newColumn = {};
+	    newColumn.id = uuidService.generateUUID();
+	    newColumn.name = "TEST eerste kolom";
+	    newColumn.cards = [];
+	    newColumn.settings = {};
+
+        var kanban = {};
+        kanban.name = name;
+        kanban.kanbanId = uuidService.generateUUID();
+        kanban.numberOfColumns = 1;
+        kanban.columns = [];
+        kanban.columns.push(newColumn.id);
+
+        this.saveColumn(newColumn, kanban.kanbanId);
+
+        var payload = angular.toJson(kanban, false);
+
+        return postToBackend(BACKEND_URI + 'api_v2.php/createkanban', payload);
+    },
+
     saveCard : function(card, kanbanId) {
           card.kanbanId = kanbanId;
           card.browser = browser;

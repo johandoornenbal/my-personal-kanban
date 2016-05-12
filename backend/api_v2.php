@@ -136,11 +136,15 @@ class KanbanAPI {
             return false;   
         }
         
+//        var_dump($kanbanObj->columns);
+        
+        $columns = json_encode($kanbanObj->columns);
+        
         $insertData = Array (
             'id' => $kanbanObj->kanbanId,
             'name' => $kanbanObj->name,
             'numberOfColumns' => $kanbanObj->numberOfColumns,
-            'columns' => '',
+            'columns' => $columns,
             'settings' => '', //todo: settings dummy for the moment
             'json' => '',
             'servertimestamp' => intval(microtime(true)*1000),
@@ -149,8 +153,11 @@ class KanbanAPI {
             'eventdetails' => $kanbanObj->kanbanId
         );
         if ($this->db->insert ('kanban', $insertData)) {
+            $jsonObj = Array (
+                'id' => $kanbanObj->kanbanId
+            );
             $event = "KANBAN_CREATE";
-            sendResponse(200, 'Kanban created ');
+            sendResponse(200, json_encode($jsonObj));
         } else {
             $event = "FAILED_KANBAN_CREATE";
             sendResponse(400, 'ERROR: could not create kanban ');

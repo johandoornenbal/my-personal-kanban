@@ -41,11 +41,24 @@
 
     <div class="container" style="margin-top: 100px;">
 
+        <div class="row">
+
         <ul>
             <li ng-repeat="kanban in allKanbans | orderBy: 'name' ">{{kanban.name}}<br/>
                 <span class="small"><a href="../kanban/#/kanban/{{kanban.id}}" target="_blank">{{ 'USER_KANBAN_LINK' | translate}}: {{kanban.id}}</a></span>
             </li>
         </ul>
+
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <input ng-model="newKanbanName" type="text" placeholder="kanban naam"/>
+            </div>
+            <div class="col-xs-2">
+                <button ng-click="createKanban()" class="btn btn-default">Nieuw</button>
+            </div>
+        </div>
+
 
     </div>
 
